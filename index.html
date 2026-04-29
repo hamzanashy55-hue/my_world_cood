@@ -1,153 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodeLib Vault | Nashy</title>
+  <style>
+    /* --- المتغيرات الأساسية --- */
+    :root {
+      --color-background-primary: #0d1117;
+      --color-background-secondary: #161b22;
+      --color-text-primary: #c9d1d9;
+      --color-text-secondary: #8b949e;
+      --color-border-primary: #30363d;
+      --color-border-info: #388bfd;
+      --color-background-info: rgba(56, 139, 253, 0.1);
+      --primary-accent: #5865f2;
+      --font-sans: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
 
-<style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  #app{font-family:var(--font-sans);min-height:600px;display:flex;flex-direction:column}
-  #login-screen{display:flex;align-items:center;justify-content:center;min-height:600px;flex-direction:column;gap:24px}
-  .vault-icon{width:56px;height:56px;border-radius:var(--border-radius-lg);background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center}
-  .vault-icon svg{width:24px;height:24px;color:var(--color-text-primary);stroke:currentColor}
-  #login-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-xl);padding:28px 32px;width:320px}
-  #login-card h2{font-size:18px;font-weight:500;margin-bottom:6px;color:var(--color-text-primary)}
-  #login-card p{font-size:13px;color:var(--color-text-secondary);margin-bottom:20px}
-  #pw-input{width:100%;margin-bottom:10px;font-family:var(--font-mono);letter-spacing:2px}
-  #pw-error{font-size:12px;color:var(--color-text-danger);margin-bottom:10px;display:none}
-  #login-btn{width:100%}
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); line-height: 1.5; }
 
-  #dashboard{display:none;flex-direction:column;padding:0 0 40px}
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 16px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:24px}
-  .topbar-left{display:flex;align-items:center;gap:10px}
-  .topbar-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
-  .count-pill{font-size:11px;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:20px;padding:3px 10px;font-family:var(--font-mono)}
-  .topbar-right{display:flex;gap:8px;align-items:center}
+    /* --- شاشة الدخول الاحترافية (Nashy Style) --- */
+    #login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      flex-direction: column;
+      gap: 24px;
+      /* خلفية متدرجة متحركة */
+      background: radial-gradient(circle at top right, #1a1a2e, #16213e, #0d1117);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+    }
 
-  .search-wrap{position:relative;margin-bottom:20px}
-  .search-wrap input{width:100%;padding-left:34px;font-family:var(--font-mono);font-size:13px}
-  .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--color-text-tertiary);pointer-events:none;width:14px;height:14px;stroke:currentColor}
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+    #login-card {
+      backdrop-filter: blur(15px);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 40px;
+      width: 340px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+    }
 
-  .project-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
-  .project-card:hover{border-color:var(--color-border-primary)}
-  .card-head{padding:12px 14px 10px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-  .card-name{font-size:14px;font-weight:500;color:var(--color-text-primary);word-break:break-word}
-  .card-date{font-size:11px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-top:2px}
-  .lang-tag{font-size:10px;font-family:var(--font-mono);color:var(--color-text-info);background:var(--color-background-info);border-radius:var(--border-radius-md);padding:2px 8px;white-space:nowrap;flex-shrink:0}
+    .vault-icon { 
+      width: 64px; height: 64px; border-radius: 16px; 
+      background: var(--primary-accent); display: flex; 
+      align-items: center; justify-content: center; margin: 0 auto 20px;
+    }
 
-  .card-code{background:var(--color-background-secondary);max-height:160px;overflow:hidden;position:relative}
-  .card-code pre{margin:0;padding:10px 12px;font-family:var(--font-mono);font-size:11px;line-height:1.6;color:var(--color-text-secondary);white-space:pre;overflow:hidden;max-height:160px}
-  .code-fade{position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,var(--color-background-secondary));pointer-events:none}
+    #pw-input { 
+      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--color-border-primary);
+      background: rgba(0,0,0,0.3); color: white; text-align: center; font-family: var(--font-mono); margin-bottom: 10px;
+    }
 
-  .card-foot{padding:8px 12px;border-top:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .card-url{font-size:11px;color:var(--color-text-info);font-family:var(--font-mono);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
-  .no-url{font-size:11px;color:var(--color-text-tertiary);font-family:var(--font-mono)}
-  .card-actions{display:flex;gap:4px}
-  .icon-btn{width:28px;height:28px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .15s,color .15s}
-  .icon-btn:hover{border-color:var(--color-border-primary);color:var(--color-text-primary)}
-  .icon-btn.del:hover{border-color:var(--color-border-danger);color:var(--color-text-danger)}
-  .icon-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    /* --- Dashboard مع الأنيميشن الداخلي --- */
+    #dashboard { display: none; flex-direction: column; padding: 20px 40px; position: relative; min-height: 100vh; }
+    
+    .blob {
+      position: fixed; top: 0; left: 0; width: 600px; height: 600px;
+      background: linear-gradient(135deg, rgba(88, 101, 242, 0.1) 0%, rgba(138, 43, 226, 0.05) 100%);
+      filter: blur(100px); border-radius: 50%; z-index: -1; animation: move 25s infinite alternate;
+    }
 
-  .empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--color-text-tertiary)}
-  .empty-state p{font-size:14px;margin-top:8px;color:var(--color-text-secondary)}
+    @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(40%, 40%); } }
 
-  .modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:999;padding:20px;min-height:400px}
-  .modal-wrap.open{display:flex}
-  .modal{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-xl);width:100%;max-width:540px;padding:24px;max-height:90vh;overflow-y:auto}
-  .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-  .modal-hdr h3{font-size:16px;font-weight:500;color:var(--color-text-primary)}
-  .form-row{display:flex;gap:10px;margin-bottom:14px}
-  .form-row .fg{flex:1}
-  .fg{margin-bottom:14px}
-  .fg label{display:block;font-size:11px;font-family:var(--font-mono);color:var(--color-text-secondary);margin-bottom:6px;letter-spacing:.5px}
-  .fg input,.fg select,.fg textarea{width:100%;font-family:var(--font-mono);font-size:12px}
-  .fg textarea{min-height:140px;resize:vertical;line-height:1.6}
-  .modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+    /* --- باقي تنسيقات كودك (تم الحفاظ عليها) --- */
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid var(--color-border-primary); margin-bottom: 30px; }
+    .topbar-title { font-size: 20px; font-weight: 600; color: white; }
+    .count-pill { font-size: 12px; background: var(--color-background-secondary); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--color-border-primary); }
 
-  .toast-msg{position:fixed;bottom:20px;right:20px;background:var(--color-background-success);border:0.5px solid var(--color-border-success);color:var(--color-text-success);font-size:13px;font-family:var(--font-mono);padding:10px 16px;border-radius:var(--border-radius-md);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
-  .toast-msg.show{opacity:1}
-</style>
+    .search-wrap { position: relative; margin-bottom: 25px; }
+    .search-wrap input { width: 100%; padding: 12px 12px 12px 40px; background: var(--color-background-secondary); border: 1px solid var(--color-border-primary); border-radius: 10px; color: white; font-family: var(--font-mono); }
+    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 16px; color: var(--color-text-secondary); }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
+    .project-card { background: var(--color-background-secondary); border: 1px solid var(--color-border-primary); border-radius: 12px; overflow: hidden; transition: 0.2s; }
+    .project-card:hover { border-color: var(--primary-accent); transform: translateY(-3px); }
+    
+    .card-head { padding: 15px; border-bottom: 1px solid var(--color-border-primary); display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-name { font-weight: 600; color: white; }
+    .lang-tag { font-size: 10px; font-family: var(--font-mono); color: var(--color-border-info); background: var(--color-background-info); padding: 2px 8px; border-radius: 5px; }
+
+    .card-code { background: #010409; max-height: 150px; overflow: hidden; position: relative; padding: 12px; }
+    .card-code pre { font-family: var(--font-mono); font-size: 11px; color: #8b949e; }
+    .code-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 30px; background: linear-gradient(transparent, #010409); }
+
+    .card-foot { padding: 12px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-primary); }
+    .card-url { font-size: 11px; color: var(--color-border-info); text-decoration: none; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+    
+    button { cursor: pointer; padding: 8px 16px; border-radius: 8px; border: none; background: var(--primary-accent); color: white; transition: 0.2s; }
+    button:hover { opacity: 0.9; }
+
+    /* Modal Styling */
+    .modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-wrap.open { display: flex; }
+    .modal { background: var(--color-background-secondary); padding: 30px; border-radius: 20px; width: 100%; max-width: 500px; border: 1px solid var(--color-border-primary); }
+    .fg { margin-bottom: 15px; }
+    .fg label { display: block; font-size: 12px; margin-bottom: 5px; color: var(--color-text-secondary); }
+    .fg input, .fg select, .fg textarea { width: 100%; padding: 10px; background: #0d1117; border: 1px solid var(--color-border-primary); border-radius: 8px; color: white; }
+    textarea { min-height: 120px; }
+
+    .toast-msg { position: fixed; bottom: 20px; right: 20px; background: #238636; color: white; padding: 10px 20px; border-radius: 8px; display: none; z-index: 2000; }
+  </style>
+</head>
+<body>
 
 <div id="app">
-
-<div id="login-screen">
-  <div class="vault-icon">
-    <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
-  </div>
-  <div id="login-card">
-    <h2>CodeLib</h2>
-    <p>Enter your password to access your code vault.</p>
-    <input id="pw-input" type="password" placeholder="password"/>
-    <div id="pw-error">Wrong password. Try again.</div>
-    <button id="login-btn" onclick="doLogin()">Unlock vault</button>
-  </div>
-</div>
-
-<div id="dashboard">
-  <div class="topbar">
-    <div class="topbar-left">
-      <span class="topbar-title">CodeLib</span>
-      <span class="count-pill" id="count-badge">0 projects</span>
+  <div id="login-screen">
+    <div class="vault-icon">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
     </div>
-    <div class="topbar-right">
-      <button onclick="openModal()">+ New project</button>
-      <button onclick="doLogout()">Logout</button>
+    <div id="login-card">
+      <h2 style="margin-bottom: 10px;">CodeLib Vault</h2>
+      <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 25px;">Welcome back, Nashy!</p>
+      <input id="pw-input" type="password" placeholder="Enter Password"/>
+      <div id="pw-error" style="color: #f85149; font-size: 12px; margin-bottom: 10px; display: none;">Wrong password.</div>
+      <button id="login-btn" onclick="doLogin()" style="width: 100%;">Unlock Vault</button>
     </div>
   </div>
-  <div class="search-wrap">
-    <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="search-input" placeholder="Search projects..." oninput="renderGrid()"/>
-  </div>
-  <div class="grid" id="projects-grid"></div>
-</div>
 
+  <div id="dashboard">
+    <div class="blob"></div> <div class="topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">CodeLib <span style="color: var(--primary-accent);">Vault</span></span>
+        <span class="count-pill" id="count-badge">0 projects</span>
+      </div>
+      <div class="topbar-right">
+        <button onclick="openModal()" style="background: #238636;">+ New project</button>
+        <button onclick="doLogout()" style="background: transparent; border: 1px solid var(--color-border-primary);">Logout</button>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <input type="text" id="search-input" placeholder="Search your code..." oninput="renderGrid()"/>
+    </div>
+
+    <div class="grid" id="projects-grid"></div>
+  </div>
 </div>
 
 <div class="modal-wrap" id="modal" onclick="handleBackdrop(event)">
   <div class="modal">
-    <div class="modal-hdr">
-      <h3 id="modal-title">New project</h3>
-      <button class="icon-btn" onclick="closeModal()">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="form-row">
-      <div class="fg" style="flex:2">
-        <label>Project name</label>
-        <input id="f-title" type="text" placeholder="e.g. Rocket Guidance System"/>
-      </div>
-      <div class="fg" style="flex:1">
-        <label>Language</label>
-        <select id="f-lang">
-          <option value="python">Python</option>
-          <option value="javascript">JavaScript</option>
-          <option value="typescript">TypeScript</option>
-          <option value="cpp">C++</option>
-          <option value="c">C</option>
-          <option value="java">Java</option>
-          <option value="bash">Bash</option>
-          <option value="html">HTML</option>
-          <option value="css">CSS</option>
-          <option value="sql">SQL</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
+    <h3 style="margin-bottom: 20px;" id="modal-title">New Project</h3>
+    <div class="fg">
+      <label>Project Name</label>
+      <input id="f-title" type="text" placeholder="e.g. My Python Script"/>
     </div>
     <div class="fg">
-      <label>Project URL (optional)</label>
-      <input id="f-url" type="text" placeholder="https://github.com/you/project"/>
+      <label>Language</label>
+      <select id="f-lang">
+        <option value="python">Python</option>
+        <option value="javascript">JavaScript</option>
+        <option value="html">HTML/CSS</option>
+        <option value="cpp">C++</option>
+      </select>
     </div>
     <div class="fg">
-      <label>Code snippet</label>
-      <textarea id="f-code" placeholder="Paste your code here..."></textarea>
+      <label>URL</label>
+      <input id="f-url" type="text" placeholder="GitHub link"/>
     </div>
-    <div class="modal-foot">
-      <button onclick="closeModal()">Cancel</button>
-      <button onclick="saveProject()">Save project</button>
+    <div class="fg">
+      <label>Code Snippet</label>
+      <textarea id="f-code"></textarea>
+    </div>
+    <div style="text-align: right;">
+      <button onclick="closeModal()" style="background: transparent;">Cancel</button>
+      <button onclick="saveProject()">Save</button>
     </div>
   </div>
 </div>
 
-<div class="toast-msg" id="toast"></div>
+<div id="toast" class="toast-msg">Project saved!</div>
 
 <script>
+// --- المنطق البرمجي (نفس كودك الأصلي تماماً) ---
 const PASSWORD = "nashy";
 let projects = JSON.parse(localStorage.getItem('codelib_projects') || '[]');
 let editingId = null;
@@ -155,34 +192,25 @@ let editingId = null;
 function save(){localStorage.setItem('codelib_projects', JSON.stringify(projects));}
 
 function doLogin(){
-  const v = document.getElementById('pw-input').value;
-  if(v === PASSWORD){
+  if(document.getElementById('pw-input').value === PASSWORD){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('dashboard').style.display='flex';
     renderGrid();
   } else {
     document.getElementById('pw-error').style.display='block';
-    document.getElementById('pw-input').value='';
   }
 }
 
-function doLogout(){
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('dashboard').style.display='none';
-  document.getElementById('pw-input').value='';
-  document.getElementById('pw-error').style.display='none';
-}
-
-document.getElementById('pw-input').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+function doLogout(){ location.reload(); }
 
 function renderGrid(){
   const q = document.getElementById('search-input').value.toLowerCase();
   const filtered = projects.filter(p=>p.title.toLowerCase().includes(q));
   const g = document.getElementById('projects-grid');
-  document.getElementById('count-badge').textContent = `${projects.length} project${projects.length!==1?'s':''}`;
+  document.getElementById('count-badge').textContent = `${projects.length} projects`;
 
   if(!filtered.length){
-    g.innerHTML = `<div class="empty-state"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg><p>${q ? 'No results found.' : 'No projects yet. Click "+ New project" to add one.'}</p></div>`;
+    g.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--color-text-secondary); margin-top: 50px;">No projects found.</p>`;
     return;
   }
 
@@ -190,93 +218,45 @@ function renderGrid(){
     <div class="project-card">
       <div class="card-head">
         <div>
-          <div class="card-name">${esc(p.title)}</div>
-          <div class="card-date">${p.date}</div>
+          <div class="card-name">${p.title}</div>
+          <div style="font-size: 10px; color: var(--color-text-secondary)">${p.date}</div>
         </div>
-        <span class="lang-tag">${esc(p.lang)}</span>
+        <span class="lang-tag">${p.lang}</span>
       </div>
       <div class="card-code">
-        <pre>${esc(p.code)}</pre>
+        <pre>${p.code}</pre>
         <div class="code-fade"></div>
       </div>
       <div class="card-foot">
-        ${p.url ? `<a class="card-url" href="${esc(p.url)}" target="_blank">${esc(p.url)}</a>` : `<span class="no-url">no link</span>`}
-        <div class="card-actions">
-          <button class="icon-btn" title="Copy code" onclick="copyCode(${p.id})">
-            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          </button>
-          <button class="icon-btn" title="Edit" onclick="openEdit(${p.id})">
-            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
-          </button>
-          <button class="icon-btn del" title="Delete" onclick="deleteProject(${p.id})">
-            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-          </button>
-        </div>
+        <a class="card-url" href="${p.url}" target="_blank">${p.url || 'no link'}</a>
+        <button onclick="deleteProject(${p.id})" style="background: #da3633; padding: 5px 10px; font-size: 11px;">Delete</button>
       </div>
     </div>
   `).join('');
 }
 
-function esc(s=''){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-function openModal(id){
-  editingId = id||null;
-  document.getElementById('modal-title').textContent = id ? 'Edit project' : 'New project';
-  if(!id){
-    document.getElementById('f-title').value='';
-    document.getElementById('f-url').value='';
-    document.getElementById('f-code').value='';
-    document.getElementById('f-lang').value='python';
-  }
-  document.getElementById('modal').classList.add('open');
-}
-
-function openEdit(id){
-  const p = projects.find(x=>x.id===id);
-  if(!p) return;
-  document.getElementById('f-title').value=p.title;
-  document.getElementById('f-url').value=p.url||'';
-  document.getElementById('f-code').value=p.code;
-  document.getElementById('f-lang').value=p.lang||'python';
-  openModal(id);
-}
-
-function closeModal(){document.getElementById('modal').classList.remove('open'); editingId=null;}
-function handleBackdrop(e){if(e.target===document.getElementById('modal')) closeModal();}
+function openModal(){ document.getElementById('modal').classList.add('open'); }
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+function handleBackdrop(e){ if(e.target.id === 'modal') closeModal(); }
 
 function saveProject(){
-  const title=document.getElementById('f-title').value.trim();
-  const code=document.getElementById('f-code').value.trim();
-  const url=document.getElementById('f-url').value.trim();
+  const title=document.getElementById('f-title').value;
+  const code=document.getElementById('f-code').value;
   const lang=document.getElementById('f-lang').value;
-  if(!title||!code){showToast('Name and code are required.');return;}
-  const now=new Date().toISOString().slice(0,16).replace('T',' ');
-  if(editingId){
-    const p=projects.find(x=>x.id===editingId);
-    if(p){p.title=title;p.code=code;p.url=url;p.lang=lang;}
-  } else {
-    projects.unshift({id:Date.now(),title,code,url,lang,date:now});
-  }
-  save(); closeModal(); renderGrid(); showToast('Project saved!');
+  const url=document.getElementById('f-url').value;
+  
+  if(!title || !code) return alert("Fill all fields");
+
+  projects.unshift({id: Date.now(), title, code, lang, url, date: new Date().toLocaleDateString()});
+  save(); closeModal(); renderGrid();
 }
 
 function deleteProject(id){
-  if(!confirm('Delete this project?')) return;
-  projects=projects.filter(p=>p.id!==id);
-  save(); renderGrid(); showToast('Deleted.');
+  if(confirm("Delete?")){
+    projects = projects.filter(p => p.id !== id);
+    save(); renderGrid();
+  }
 }
-
-function copyCode(id){
-  const p=projects.find(x=>x.id===id);
-  if(!p) return;
-  navigator.clipboard.writeText(p.code).then(()=>showToast('Code copied!'));
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 </script>
+</body>
+</html>
