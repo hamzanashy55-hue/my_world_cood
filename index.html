@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Code World | Potter Ultimate Vault</title>
+    <title>Code World | Potter Master Vault</title>
     
     <style>
-        /* --- الأساسيات واللوحة اللونية --- */
+        /* --- 1. الـ Variables والأساسيات --- */
         :root {
             --gold-color: #d4af37;
             --bg-dark: #0d1117;
@@ -15,13 +15,14 @@
             --error-red: #f85149;
             --success-green: #3fb950;
             --border-gray: #30363d;
+            --editor-blue: #79c0ff;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            -webkit-font-smoothing: antialiased;
+            outline: none;
         }
 
         body, html {
@@ -29,44 +30,13 @@
             width: 100%;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
             overflow: hidden;
             perspective: 1000px;
-            cursor: none; /* إخفاء الماوس لتعويض النقطة الذهبية */
+            cursor: none; /* إخفاء الماوس الأصلي */
         }
 
-        /* --- 1. شاشة الترحيب الأسطورية --- */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10001;
-            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
-        }
-
-        .welcome-msg {
-            font-size: 32px;
-            color: var(--gold-color);
-            text-align: center;
-            font-family: 'Courier New', Courier, monospace;
-            line-height: 1.6;
-            letter-spacing: 3px;
-            animation: fadeInScale 2.8s ease-in-out forwards;
-        }
-
-        @keyframes fadeInScale {
-            0% { opacity: 0; transform: scale(0.85) translateY(10px); }
-            50% { opacity: 1; transform: scale(1) translateY(0); }
-            100% { opacity: 0; transform: scale(1.05) translateY(-10px); }
-        }
-
-        /* --- 2. نظام الماوس (نقطة ذهبية مركزية + هالة نبضية) --- */
+        /* --- 2. الماوس الذهبي المصغر (نظام النبض) --- */
         .cursor-glow {
             position: fixed;
             width: 180px;
@@ -74,8 +44,8 @@
             background: radial-gradient(
                 circle, 
                 var(--gold-color) 0%, 
-                var(--gold-color) 2%, 
-                rgba(212, 175, 55, 0.15) 10%, 
+                var(--gold-color) 1.5%, 
+                rgba(212, 175, 55, 0.1) 10%, 
                 transparent 70%
             );
             border-radius: 50%;
@@ -85,193 +55,142 @@
             will-change: left, top;
             animation: glowPulse 4s infinite ease-in-out;
         }
-
         @keyframes glowPulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.75; }
-            50% { transform: translate(-50%, -50%) scale(1.12); opacity: 1; }
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
         }
 
-        /* --- 3. الخلفية الديناميكية وشاشة تسجيل الدخول --- */
+        /* --- 3. شاشة الترحيب (الرسالة الأصلية) --- */
+        #splash-screen {
+            position: fixed; inset: 0; background: #000;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10001; transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .welcome-msg {
+            font-size: 28px;
+            color: var(--gold-color);
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            animation: fadeInOut 2.8s ease-in-out forwards;
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+
+        /* --- 4. شاشة الدخول والخلفية --- */
         #bg-image {
-            position: fixed;
-            inset: -60px;
-            background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
-            background-size: cover;
-            background-position: center;
-            z-index: -1;
-            transition: transform 0.3s ease-out;
-            will-change: transform;
+            position: fixed; inset: -60px;
+            background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070') center/cover;
+            z-index: -1; will-change: transform; transition: transform 0.3s ease-out;
         }
-
-        #login-screen {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.5s;
-        }
-
+        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; }
         .login-card {
-            background: rgba(13, 17, 23, 0.92);
+            background: rgba(13, 17, 23, 0.95);
             padding: 50px;
-            border-radius: 24px;
+            border-radius: 25px;
             border: 1px solid var(--gold-color);
             text-align: center;
             backdrop-filter: blur(15px);
             width: 400px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            transform-style: preserve-3d;
-            transition: transform 0.1s;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7);
         }
 
-        .login-card h2 {
-            font-size: 28px;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-        }
-
-        #pw-input {
-            width: 100%;
-            padding: 15px;
-            margin: 25px 0;
-            background: #010409;
-            border: 1px solid var(--border-gray);
-            color: #fff;
-            text-align: center;
-            border-radius: 12px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        #pw-input:focus {
-            border-color: var(--gold-color);
-        }
-
-        /* --- 4. لوحة التحكم (الخزنة المركزية) --- */
+        /* --- 5. لوحة التحكم (الخزنة الدائمة) --- */
         #dashboard {
             display: none;
-            padding: 50px 8%;
+            padding: 50px 7%;
             height: 100vh;
             overflow-y: auto;
-            background: linear-gradient(rgba(13, 17, 23, 0.95), rgba(13, 17, 23, 0.95));
+            background: rgba(13, 17, 23, 0.9);
         }
-
-        .header-section {
+        .db-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
             border-bottom: 1px solid var(--border-gray);
-            padding-bottom: 25px;
+            padding-bottom: 30px;
+            margin-bottom: 40px;
         }
-
         .grid-layout {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
+            gap: 30px;
         }
-
         .project-card {
             background: var(--card-bg);
-            padding: 25px;
-            border-radius: 18px;
+            padding: 30px;
+            border-radius: 20px;
             border: 1px solid var(--border-gray);
             text-align: center;
-            transition: all 0.3s ease;
+            transition: transform 0.3s, border-color 0.3s;
         }
+        .project-card:hover { transform: translateY(-10px); border-color: var(--gold-color); }
 
-        .project-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--gold-color);
-            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
-        }
-
-        /* --- 5. نظام اختيار العرض (The Selector) --- */
-        #choice-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.92);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10002;
-        }
-
-        .choice-box {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 20px;
-            border: 2px solid var(--gold-color);
-            text-align: center;
-            width: 450px;
-            box-shadow: 0 0 50px rgba(212,175,55,0.2);
-        }
-
-        /* --- 6. بيئة التطوير المتكاملة (Live IDE Studio) --- */
+        /* --- 6. بيئة التطوير IDE (كود يسار | عرض يمين) --- */
         #ide-screen {
             display: none;
             height: 100vh;
             flex-direction: column;
             background: #010409;
         }
-
         .ide-header {
             background: #161b22;
-            padding: 15px 25px;
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border-gray);
         }
-
         .ide-body {
             display: flex;
             flex: 1;
             overflow: hidden;
             flex-direction: row-reverse; /* الكود يسار والعرض يمين */
         }
-
+        
+        /* القسم الأيسر: محرر الكود والمساعد */
         #editor-part {
             flex: 1;
             display: flex;
             flex-direction: column;
-            border-right: 1px solid var(--border-gray);
+            border-right: 2px solid var(--border-gray);
+            padding: 25px;
+            background: #0d1117;
+            position: relative;
         }
-
         #code-editor {
             flex: 1;
             background: #010409;
-            color: #79c0ff;
-            padding: 25px;
-            border: none;
-            outline: none;
-            font-family: 'Cascadia Code', 'Fira Code', monospace;
+            color: var(--editor-blue);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            font-family: 'Cascadia Code', monospace;
             font-size: 15px;
             line-height: 1.6;
             resize: none;
             direction: ltr;
         }
 
-        #ai-status-bar {
-            background: #0d1117;
-            padding: 12px;
-            border-top: 1px solid var(--border-gray);
+        /* المساعد الذكي AI (فوق يسار) */
+        #ai-assistant-box {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid var(--gold-color);
+            padding: 12px 20px;
+            border-radius: 10px;
             font-size: 13px;
+            z-index: 100;
             color: var(--gold-color);
-            text-align: center;
-            font-weight: 500;
+            backdrop-filter: blur(5px);
+            pointer-events: none;
         }
 
-        #history-log {
-            background: #0d1117;
-            border-top: 1px solid var(--border-gray);
-            max-height: 180px;
-            overflow-y: auto;
-            padding: 15px;
-            display: none; /* يفتح عند الضغط على زر الهيستوري */
-        }
-
+        /* القسم الأيمن: العرض الحي */
         #preview-part {
             flex: 1;
             background: #000;
@@ -280,376 +199,303 @@
             justify-content: center;
             position: relative;
         }
-
-        /* إطارات الأجهزة */
-        .phone-container {
-            width: 325px;
-            height: 600px;
-            background: #111;
-            border: 14px solid #222;
-            border-radius: 40px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 0 60px rgba(0,0,0,0.9);
+        .phone-frame {
+            width: 320px; height: 580px;
+            background: #222; border: 14px solid #333;
+            border-radius: 40px; overflow: hidden;
+            box-shadow: 0 0 60px rgba(0,0,0,0.8);
+            transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .laptop-frame { width: 100% !important; height: 100% !important; border-radius: 0; border: none; }
+        iframe { width: 100%; height: 100%; background: #fff; border: none; pointer-events: auto; }
 
-        .laptop-container {
-            width: 100%;
-            height: 100%;
-            border-radius: 0;
-            border: none;
-        }
+        /* نافذة الاختيار (Choice Modal) */
+        #choice-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 10010; }
+        .choice-box { background: var(--card-bg); padding: 40px; border-radius: 20px; border: 2px solid var(--gold-color); text-align: center; width: 420px; }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            background: #fff;
-            border: none;
-            pointer-events: auto; /* تمكين التفاعل مع محتوى الموقع المرفوع */
-        }
-
-        /* --- الأزرار والتفاعلات --- */
-        button {
-            cursor: pointer;
-            border-radius: 10px;
-            border: none;
-            padding: 12px 24px;
-            font-weight: bold;
-            font-size: 14px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .btn-main { background: var(--gold-color); color: #000; }
-        .btn-main:hover { background: #fff; transform: translateY(-2px); }
-        
-        .btn-danger { background: #da3637; color: #fff; }
-        .btn-danger:hover { opacity: 0.8; }
-
-        .btn-action { background: #238636; color: #fff; width: 100%; margin-top: 15px; }
-
-        .history-entry {
-            border-bottom: 1px solid #333;
-            padding: 10px 0;
-            font-size: 12px;
-        }
+        /* الأزرار */
+        button { cursor: pointer; border-radius: 10px; border: none; padding: 12px 25px; font-weight: bold; transition: 0.3s; font-size: 14px; }
+        .btn-gold { background: var(--gold-color); color: #000; }
+        .btn-gold:hover { background: #fff; transform: translateY(-2px); }
+        .btn-open { background: var(--success-green); color: #fff; width: 100%; margin-top: 15px; }
+        .btn-delete { background: transparent; color: var(--error-red); font-size: 11px; margin-top: 15px; border: 1px solid transparent; }
+        .btn-delete:hover { border-color: var(--error-red); }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <div class="welcome-msg">
-            hello_Eng/potter<br>
-            welcome to again
-        </div>
+        <div class="welcome-msg">hello_Eng/potter<br>welcome to again</div>
     </div>
 
-    <div class="cursor-glow" id="custom-mouse"></div>
+    <div class="cursor-glow" id="mouse-cursor"></div>
 
     <div id="bg-image"></div>
 
-    <section id="login-container">
-        <div id="login-screen">
-            <div class="login-card" id="main-login-card">
-                <h2 style="color: #fff;">Vault Access</h2>
-                <p style="color: var(--gold-color); font-size: 14px; margin-top: 8px;">Master Account: Eng/Potter</p>
-                <input id="pw-input" type="password" placeholder="Enter Secure Password">
-                <button class="btn-main" onclick="validateAndEnter()" style="width: 100%">Unlock Potter Vault</button>
-                <p style="margin-top: 20px; font-size: 11px; color: #555;">SECURITY LEVEL: HIGH</p>
-            </div>
+    <section id="login-screen">
+        <div class="login-card">
+            <h2 style="color:#fff;">Potter Vault Access</h2>
+            <p style="color:var(--gold-color); font-size:14px; margin-top:10px;">Master Identity: Eng/Potter</p>
+            <input id="pw-input" type="password" placeholder="Enter Vault Password">
+            <button class="btn-gold" onclick="validateIdentity()" style="width: 100%">Unlock Potter Vault</button>
         </div>
     </section>
 
     <main id="dashboard">
-        <div class="header-section">
+        <div class="db-header">
             <div>
-                <h1 style="color: var(--gold-color); font-size: 28px;">Potter Projects Vault</h1>
-                <p style="color: #8b949e; font-size: 13px;">Manage and monitor your deployments</p>
+                <h1 style="color:var(--gold-color);">System Repository</h1>
+                <p style="color:#555; font-size:12px;">Manage your persistent code systems</p>
             </div>
-            <div style="display: flex; gap: 15px;">
-                <button onclick="triggerNewProject()" class="btn-main">+ Add System</button>
-                <button onclick="location.reload()" class="btn-danger">Lock Vault</button>
+            <div style="display:flex; gap:15px;">
+                <button onclick="createNewProject()" class="btn-gold">+ Add New System</button>
+                <button onclick="location.reload()" style="background:#da3637; color:#fff;">Logout</button>
             </div>
         </div>
-        
         <div id="projects-grid" class="grid-layout">
             </div>
     </main>
 
     <div id="choice-modal">
         <div class="choice-box">
-            <h2 style="color: var(--gold-color); margin-bottom: 15px;">Environment Setup</h2>
-            <p style="margin-bottom: 30px; color: #8b949e;">Select the target display device for your code</p>
-            <div style="display: flex; gap: 20px; justify-content: center;">
-                <div onclick="initiateIDE('phone')" style="cursor:pointer; background:#0d1117; padding:20px; border-radius:15px; border:1px solid #333; flex:1;">
-                    <span style="font-size:30px;">📱</span><br><br><b>Mobile Mode</b>
+            <h2 style="color:var(--gold-color); margin-bottom:20px;">Environment Setup</h2>
+            <p style="color:#8b949e; margin-bottom:30px;">How would you like to initialize this project?</p>
+            <div style="display:flex; gap:20px; justify-content:center;">
+                <div onclick="launchStudio('phone')" style="cursor:pointer; background:#0d1117; padding:25px; border-radius:20px; border:1px solid #333; flex:1;">
+                    <span style="font-size:35px;">📱</span><br><br><b>Phone View</b>
                 </div>
-                <div onclick="initiateIDE('laptop')" style="cursor:pointer; background:#0d1117; padding:20px; border-radius:15px; border:1px solid #333; flex:1;">
-                    <span style="font-size:30px;">💻</span><br><br><b>Desktop Mode</b>
+                <div onclick="launchStudio('laptop')" style="cursor:pointer; background:#0d1117; padding:25px; border-radius:20px; border:1px solid #333; flex:1;">
+                    <span style="font-size:35px;">💻</span><br><br><b>Laptop View</b>
                 </div>
             </div>
-            <button onclick="cancelChoice()" style="margin-top: 30px; background: transparent; color: #da3637;">Abort Operation</button>
+            <button onclick="closeChoiceModal()" style="margin-top:30px; background:transparent; color:#555;">Cancel Operation</button>
         </div>
     </div>
 
     <section id="ide-screen">
         <header class="ide-header">
-            <div style="display:flex; align-items:center; gap:20px;">
-                <button onclick="exitToDashboard()" style="background: #30363d; color: #fff;">← Terminal</button>
-                <h3 id="current-ide-title" style="color: var(--gold-color);">Editor</h3>
-            </div>
-            <div style="display: flex; gap: 15px;">
-                <button onclick="toggleHistoryView()" style="background: #161b22; color: #fff; border: 1px solid #333;">📜 View History</button>
-                <button onclick="commitChanges()" class="btn-main">Commit & Save</button>
+            <button onclick="saveAndExitStudio()" style="background:#30363d; color:#fff;">← Save & Terminal</button>
+            <h3 id="studio-title" style="color:var(--gold-color);">System Editor</h3>
+            <div style="display:flex; gap:10px;">
+                <button onclick="toggleLogPanel()" style="background:#161b22; color:#fff; border:1px solid #333;">📜 View History</button>
+                <button onclick="forceSync()" class="btn-gold">Manual Sync</button>
             </div>
         </header>
 
-        <div id="history-log"></div>
+        <div id="history-panel" style="display:none; background:#0d1117; padding:20px; border-bottom:1px solid #333; max-height:200px; overflow-y:auto;"></div>
 
         <div class="ide-body">
             <div id="preview-part">
-                <div id="wrapper-frame" class="phone-container">
-                    <iframe id="live-render-engine"></iframe>
+                <div id="device-wrapper" class="phone-frame">
+                    <iframe id="render-viewport"></iframe>
                 </div>
             </div>
 
             <div id="editor-part">
-                <textarea id="code-editor" oninput="liveCompiler()" placeholder="// Start coding, Potter..."></textarea>
-                <div id="ai-status-bar">✨ AI Engine: System Online - Listening for syntax...</div>
+                <div id="ai-assistant-box">✨ AI Engine: System Nominal - Listening...</div>
+                
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:11px; color:var(--gold-color); display:block; margin-bottom:5px;">System Identifier</label>
+                    <input type="text" id="studio-name-input" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:8px;">
+                </div>
+                
+                <div style="margin-bottom:20px;">
+                    <label style="font-size:11px; color:var(--gold-color); display:block; margin-bottom:5px;">External System Link</label>
+                    <input type="text" id="studio-link-input" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:8px;" placeholder="https://...">
+                </div>
+
+                <label style="font-size:11px; color:var(--gold-color); display:block; margin-bottom:5px;">Source Code Core</label>
+                <textarea id="code-editor" oninput="compileRealTime()" placeholder="// Initiate logic, Potter..."></textarea>
             </div>
         </div>
     </section>
 
     <script>
         /**
-         * Potter Script Engine v5.0
-         * Handles all interactions, AI logic, and data persistence.
+         * Potter Core Logic Engine
+         * Handles persistence, AI simulation, and UI flow.
          */
 
-        // --- 1. نظام الماوس المتطور ---
-        const mouseGlow = document.getElementById('custom-mouse');
-        const bgLayer = document.getElementById('bg-image');
-        const loginCard = document.getElementById('main-login-card');
+        // --- 1. نظام الماوس والتحسين ---
+        const cursor = document.getElementById('mouse-cursor');
+        const bg = document.getElementById('bg-image');
 
-        window.addEventListener('mousemove', (event) => {
-            // تحديث موقع النقطة الذهبية
-            mouseGlow.style.left = event.clientX + 'px';
-            mouseGlow.style.top = event.clientY + 'px';
+        window.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
 
-            // حسابات البارالاكس للخلفية والكارت
-            const horizontalShift = (window.innerWidth / 2 - event.clientX) / 75;
-            const verticalShift = (window.innerHeight / 2 - event.clientY) / 75;
-
-            if (bgLayer) {
-                bgLayer.style.transform = `scale(1.1) translate(${horizontalShift}px, ${verticalShift}px)`;
-            }
-
-            if (loginCard && document.getElementById('login-screen').style.display !== 'none') {
-                loginCard.style.transform = `rotateY(${horizontalShift}deg) rotateX(${-verticalShift}deg)`;
-            }
+            // Parallax Effect
+            const moveX = (window.innerWidth / 2 - e.clientX) / 80;
+            const moveY = (window.innerHeight / 2 - e.clientY) / 80;
+            bg.style.transform = `scale(1.1) translate(${moveX}px, ${moveY}px)`;
         });
 
         // --- 2. نظام الدخول بالـ Enter ---
         document.getElementById('pw-input').addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') validateAndEnter();
+            if (e.key === 'Enter') validateIdentity();
         });
 
-        // --- 3. إدارة البيانات الأساسية ---
-        let projectDatabase = JSON.parse(localStorage.getItem('potter_master_db')) || [];
-        let currentActiveIndex = null;
+        // --- 3. نظام قاعدة البيانات المحلية (LocalStorage) ---
+        let vaultData = JSON.parse(localStorage.getItem('potter_master_vault')) || [];
+        let currentTargetIndex = null;
 
         /**
-         * التحقق من الهوية والدخول
+         * التحقق من الهوية
          */
-        function validateAndEnter() {
-            const secret = document.getElementById('pw-input').value;
-            if (secret === 'nashy') {
-                // إخفاء شاشة الدخول
-                document.getElementById('login-container').style.display = 'none';
+        function validateIdentity() {
+            if (document.getElementById('pw-input').value === 'nashy') {
+                document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
-                
-                // إعدادات الماوس
                 document.body.style.cursor = 'auto';
-                mouseGlow.style.display = 'none';
-                
-                refreshProjectsDisplay();
+                cursor.style.display = 'none';
+                refreshDashboard();
             } else {
-                alert('ACCESS DENIED: Unauthorized Identity Detected.');
+                alert("ACCESS DENIED: Unauthorized Identity.");
             }
         }
 
         /**
-         * تحديث عرض المشاريع في الداشبورد
+         * تحديث الداشبورد
          */
-        function refreshProjectsDisplay() {
-            const container = document.getElementById('projects-grid');
-            container.innerHTML = '';
-
-            projectDatabase.forEach((proj, idx) => {
-                const element = document.createElement('div');
-                element.className = 'project-card';
-                element.innerHTML = `
-                    <h3 style="color:#fff; margin-bottom:10px;">${proj.name}</h3>
-                    <p style="font-size:11px; color:#8b949e; margin-bottom:20px;">STAMP: ${proj.timestamp}</p>
-                    <button class="btn-action" onclick="prepareLaunch(${idx})">OPEN VAULT</button>
-                    <button onclick="purgeProject(${idx})" style="background:transparent; color:#da3637; font-size:10px; margin-top:15px; border:none;">PURGE SYSTEM</button>
+        function refreshDashboard() {
+            const grid = document.getElementById('projects-grid');
+            grid.innerHTML = '';
+            vaultData.forEach((proj, idx) => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `
+                    <h3>${proj.name}</h3>
+                    <p style="font-size:10px; color:#555;">STAMP: ${proj.updated || 'NEW'}</p>
+                    <button class="btn-open" onclick="openChoiceModal(${idx})">OPEN VAULT</button>
+                    <button class="btn-delete" onclick="deleteSystem(${idx})">PURGE SYSTEM</button>
                 `;
-                container.appendChild(element);
+                grid.appendChild(card);
             });
         }
 
         /**
-         * تحضير إطلاق الـ IDE واختيار النمط
+         * نظام الـ IDE والتشغيل المباشر
          */
-        function prepareLaunch(index) {
-            currentActiveIndex = index;
+        function openChoiceModal(idx) {
+            currentTargetIndex = idx;
             document.getElementById('choice-modal').style.display = 'flex';
         }
 
-        function cancelChoice() {
+        function closeChoiceModal() {
             document.getElementById('choice-modal').style.display = 'none';
         }
 
-        /**
-         * تشغيل بيئة التطوير بالنمط المختار
-         */
-        function initiateIDE(mode) {
-            const project = projectDatabase[currentActiveIndex];
-            
-            // تهيئة الواجهة
+        function launchStudio(mode) {
+            const project = vaultData[currentTargetIndex];
             document.getElementById('choice-modal').style.display = 'none';
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('ide-screen').style.display = 'flex';
             
-            // تحميل البيانات
-            document.getElementById('current-ide-title').innerText = "SYSTEM: " + project.name;
-            document.getElementById('code-editor').value = project.codeContent || '\n<h1 style="text-align:center; margin-top:20%; font-family:sans-serif;">System Ready</h1>';
+            // تعبئة البيانات
+            document.getElementById('studio-name-input').value = project.name;
+            document.getElementById('studio-link-input').value = project.link || '';
+            document.getElementById('code-editor').value = project.code || '<h1>Ready, Potter?</h1>';
             
-            // ضبط حجم الشاشة يمين
-            const frameWrapper = document.getElementById('wrapper-frame');
-            if (mode === 'laptop') {
-                frameWrapper.className = 'laptop-container';
+            // ضبط الجهاز
+            const wrapper = document.getElementById('device-wrapper');
+            wrapper.className = (mode === 'laptop') ? 'laptop-frame' : 'phone-frame';
+            
+            compileRealTime();
+        }
+
+        /**
+         * المترجم المباشر وذكاء الـ AI
+         */
+        function compileRealTime() {
+            const code = document.getElementById('code-editor').value;
+            const link = document.getElementById('studio-link-input').value;
+            const iframe = document.getElementById('render-viewport');
+            
+            // العرض: إذا كان هناك لينك، افتحه، وإلا اعرض الكود
+            if (link.trim() !== "") {
+                iframe.src = link;
             } else {
-                frameWrapper.className = 'phone-container';
+                iframe.srcdoc = code;
             }
+
+            // --- AI Analysis Logic ---
+            const ai = document.getElementById('ai-assistant-box');
+            let status = "✨ AI Engine: <span style='color:var(--success-green)'>Logic 100% Valid.</span>";
             
-            liveCompiler(); // تشغيل الكومبايلر لأول مرة
+            if (code.includes('if') && !code.includes(':')) {
+                status = "✨ AI Engine: <span style='color:var(--error-red)'>ERROR: Missing ':' in condition.</span>";
+            } else if ((code.match(/\(/g) || []).length !== (code.match(/\)/g) || []).length) {
+                status = "✨ AI Engine: <span style='color:var(--error-red)'>WARNING: Unclosed brackets detected.</span>";
+            }
+
+            ai.innerHTML = status;
         }
 
         /**
-         * الكومبايلر المباشر والمساعد الذكي AI
+         * الحفظ النهائي وتاريخ التعديلات
          */
-        function liveCompiler() {
-            const rawCode = document.getElementById('code-editor').value;
-            const renderEngine = document.getElementById('live-render-engine');
+        function saveAndExitStudio() {
+            const p = vaultData[currentTargetIndex];
+            const oldCode = p.code || "";
+            const newCode = document.getElementById('code-editor').value;
             
-            // الحقن المباشر في الـ iframe
-            renderEngine.srcdoc = rawCode;
-            
-            // --- محرك تحليل AI الذكي ---
-            const aiBar = document.getElementById('ai-status-bar');
-            let analysisResult = "✨ AI Engine: <span style='color:#3fb950'>Code logic 100% Correct. System Operational.</span>";
-            
-            // فحص الأخطاء (Simulation)
-            if (rawCode.includes('if') && !rawCode.includes(':')) {
-                analysisResult = "✨ AI Engine: <span style='color:#f85149'>CRITICAL ERROR: Line ? - Missing Colon ':' after logical condition.</span>";
-            } else if ((rawCode.match(/\(/g) || []).length !== (rawCode.match(/\)/g) || []).length) {
-                analysisResult = "✨ AI Engine: <span style='color:#f85149'>SYNTAX WARNING: Unbalanced Parentheses detected. Check your brackets.</span>";
-            } else if (rawCode.includes('print') && !rawCode.includes('(')) {
-                analysisResult = "✨ AI Engine: <span style='color:#f85149'>LOGIC ERROR: print statement requires () in modern standards.</span>";
+            // تسجيل الهيستوري
+            if (!p.history) p.history = [];
+            if (oldCode !== newCode) {
+                p.history.push({
+                    date: new Date().toLocaleString(),
+                    old: oldCode.substring(0, 30) + "...",
+                    new: newCode.substring(0, 30) + "..."
+                });
             }
 
-            aiBar.innerHTML = analysisResult;
-        }
+            p.name = document.getElementById('studio-name-input').value;
+            p.link = document.getElementById('studio-link-input').value;
+            p.code = newCode;
+            p.updated = new Date().toLocaleString();
 
-        /**
-         * نظام الـ History المتطور (مقارنة النسخ)
-         */
-        function commitChanges() {
-            const oldVersion = projectDatabase[currentActiveIndex].codeContent || "";
-            const newVersion = document.getElementById('code-editor').value;
-            const timeStamp = new Date().toLocaleString();
-
-            // إنشاء سجل الهيستوري
-            if (!projectDatabase[currentActiveIndex].changeLog) {
-                projectDatabase[currentActiveIndex].changeLog = [];
-            }
-
-            const changeEntry = {
-                time: timeStamp,
-                author: "Eng/Potter",
-                oldCode: oldVersion,
-                newCode: newVersion,
-                diffSummary: "Modified logic & structure"
-            };
-
-            projectDatabase[currentActiveIndex].changeLog.push(changeEntry);
-            projectDatabase[currentActiveIndex].codeContent = newVersion;
-            projectDatabase[currentActiveIndex].timestamp = timeStamp;
-
-            // حفظ في الـ LocalStorage
-            localStorage.setItem('potter_master_db', JSON.stringify(projectDatabase));
-            alert("COMMIT SUCCESSFUL: Changes pushed to Vault History.");
-        }
-
-        /**
-         * عرض سجل التعديلات
-         */
-        function toggleHistoryView() {
-            const panel = document.getElementById('history-log');
-            if (panel.style.display === 'block') {
-                panel.style.display = 'none';
-                return;
-            }
-            
-            panel.style.display = 'block';
-            const logData = projectDatabase[currentActiveIndex].changeLog || [];
-            
-            if (logData.length === 0) {
-                panel.innerHTML = "<p style='color:#555; text-align:center;'>No history logs found for this project.</p>";
-            } else {
-                panel.innerHTML = logData.map(entry => `
-                    <div class="history-entry">
-                        <b style="color:var(--gold-color)">[${entry.time}] Action by ${entry.author}</b><br>
-                        <div style="display:flex; gap:10px; margin-top:5px;">
-                            <div style="flex:1; background:#1a0000; color:#f85149; padding:5px; border-radius:4px;">OLD: ${entry.oldCode.substring(0,40)}...</div>
-                            <div style="flex:1; background:#001a00; color:#3fb950; padding:5px; border-radius:4px;">NEW: ${entry.newCode.substring(0,40)}...</div>
-                        </div>
-                    </div>
-                `).reverse().join('');
-            }
-        }
-
-        /**
-         * وظائف مساعدة
-         */
-        function exitToDashboard() {
+            syncVault();
             document.getElementById('ide-screen').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
-            refreshProjectsDisplay();
+            refreshDashboard();
+        }
+
+        function toggleLogPanel() {
+            const panel = document.getElementById('history-panel');
+            if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
+            panel.style.display = 'block';
+            const logs = vaultData[currentTargetIndex].history || [];
+            panel.innerHTML = logs.map(l => `
+                <div style="font-size:11px; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
+                    <b style="color:var(--gold-color)">[${l.date}]</b> 
+                    <span style="color:var(--error-red)">OLD: ${l.old}</span> | 
+                    <span style="color:var(--success-green)">NEW: ${l.new}</span>
+                </div>
+            `).reverse().join('');
+        }
+
+        function syncVault() {
+            localStorage.setItem('potter_master_vault', JSON.stringify(vaultData));
         }
 
         function createNewProject() {
-            const title = prompt("Enter Unique Project Identifier:");
-            if (title) {
-                const newSystem = {
-                    name: title,
-                    codeContent: "",
-                    timestamp: new Date().toLocaleString(),
-                    changeLog: []
-                };
-                projectDatabase.push(newSystem);
-                localStorage.setItem('potter_master_db', JSON.stringify(projectDatabase));
-                refreshProjectsDisplay();
+            const name = prompt("Project Identifier:");
+            if (name) {
+                vaultData.push({ name: name, code: '', history: [], updated: new Date().toLocaleString() });
+                syncVault();
+                refreshDashboard();
             }
         }
 
-        function purgeProject(idx) {
-            if (confirm("WARNING: Permanent Deletion Protocol?")) {
-                projectDatabase.splice(idx, 1);
-                localStorage.setItem('potter_master_db', JSON.stringify(projectDatabase));
-                refreshProjectsDisplay();
+        function deleteSystem(idx) {
+            if (confirm("Confirm Permanent Deletion Protocol?")) {
+                vaultData.splice(idx, 1);
+                syncVault();
+                refreshDashboard();
             }
         }
+
+        function forceSync() { syncVault(); alert("Manual Sync Completed."); }
 
         // إخفاء شاشة الترحيب
         window.onload = () => {
