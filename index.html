@@ -1,0 +1,282 @@
+
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  #app{font-family:var(--font-sans);min-height:600px;display:flex;flex-direction:column}
+  #login-screen{display:flex;align-items:center;justify-content:center;min-height:600px;flex-direction:column;gap:24px}
+  .vault-icon{width:56px;height:56px;border-radius:var(--border-radius-lg);background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center}
+  .vault-icon svg{width:24px;height:24px;color:var(--color-text-primary);stroke:currentColor}
+  #login-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-xl);padding:28px 32px;width:320px}
+  #login-card h2{font-size:18px;font-weight:500;margin-bottom:6px;color:var(--color-text-primary)}
+  #login-card p{font-size:13px;color:var(--color-text-secondary);margin-bottom:20px}
+  #pw-input{width:100%;margin-bottom:10px;font-family:var(--font-mono);letter-spacing:2px}
+  #pw-error{font-size:12px;color:var(--color-text-danger);margin-bottom:10px;display:none}
+  #login-btn{width:100%}
+
+  #dashboard{display:none;flex-direction:column;padding:0 0 40px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 0 16px;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:24px}
+  .topbar-left{display:flex;align-items:center;gap:10px}
+  .topbar-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+  .count-pill{font-size:11px;color:var(--color-text-secondary);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:20px;padding:3px 10px;font-family:var(--font-mono)}
+  .topbar-right{display:flex;gap:8px;align-items:center}
+
+  .search-wrap{position:relative;margin-bottom:20px}
+  .search-wrap input{width:100%;padding-left:34px;font-family:var(--font-mono);font-size:13px}
+  .search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--color-text-tertiary);pointer-events:none;width:14px;height:14px;stroke:currentColor}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+
+  .project-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
+  .project-card:hover{border-color:var(--color-border-primary)}
+  .card-head{padding:12px 14px 10px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+  .card-name{font-size:14px;font-weight:500;color:var(--color-text-primary);word-break:break-word}
+  .card-date{font-size:11px;color:var(--color-text-tertiary);font-family:var(--font-mono);margin-top:2px}
+  .lang-tag{font-size:10px;font-family:var(--font-mono);color:var(--color-text-info);background:var(--color-background-info);border-radius:var(--border-radius-md);padding:2px 8px;white-space:nowrap;flex-shrink:0}
+
+  .card-code{background:var(--color-background-secondary);max-height:160px;overflow:hidden;position:relative}
+  .card-code pre{margin:0;padding:10px 12px;font-family:var(--font-mono);font-size:11px;line-height:1.6;color:var(--color-text-secondary);white-space:pre;overflow:hidden;max-height:160px}
+  .code-fade{position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,var(--color-background-secondary));pointer-events:none}
+
+  .card-foot{padding:8px 12px;border-top:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .card-url{font-size:11px;color:var(--color-text-info);font-family:var(--font-mono);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:160px}
+  .no-url{font-size:11px;color:var(--color-text-tertiary);font-family:var(--font-mono)}
+  .card-actions{display:flex;gap:4px}
+  .icon-btn{width:28px;height:28px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .15s,color .15s}
+  .icon-btn:hover{border-color:var(--color-border-primary);color:var(--color-text-primary)}
+  .icon-btn.del:hover{border-color:var(--color-border-danger);color:var(--color-text-danger)}
+  .icon-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  .empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--color-text-tertiary)}
+  .empty-state p{font-size:14px;margin-top:8px;color:var(--color-text-secondary)}
+
+  .modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:999;padding:20px;min-height:400px}
+  .modal-wrap.open{display:flex}
+  .modal{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-xl);width:100%;max-width:540px;padding:24px;max-height:90vh;overflow-y:auto}
+  .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .modal-hdr h3{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+  .form-row{display:flex;gap:10px;margin-bottom:14px}
+  .form-row .fg{flex:1}
+  .fg{margin-bottom:14px}
+  .fg label{display:block;font-size:11px;font-family:var(--font-mono);color:var(--color-text-secondary);margin-bottom:6px;letter-spacing:.5px}
+  .fg input,.fg select,.fg textarea{width:100%;font-family:var(--font-mono);font-size:12px}
+  .fg textarea{min-height:140px;resize:vertical;line-height:1.6}
+  .modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+
+  .toast-msg{position:fixed;bottom:20px;right:20px;background:var(--color-background-success);border:0.5px solid var(--color-border-success);color:var(--color-text-success);font-size:13px;font-family:var(--font-mono);padding:10px 16px;border-radius:var(--border-radius-md);opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
+  .toast-msg.show{opacity:1}
+</style>
+
+<div id="app">
+
+<div id="login-screen">
+  <div class="vault-icon">
+    <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+  </div>
+  <div id="login-card">
+    <h2>CodeLib</h2>
+    <p>Enter your password to access your code vault.</p>
+    <input id="pw-input" type="password" placeholder="password"/>
+    <div id="pw-error">Wrong password. Try again.</div>
+    <button id="login-btn" onclick="doLogin()">Unlock vault</button>
+  </div>
+</div>
+
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-title">CodeLib</span>
+      <span class="count-pill" id="count-badge">0 projects</span>
+    </div>
+    <div class="topbar-right">
+      <button onclick="openModal()">+ New project</button>
+      <button onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="search-input" placeholder="Search projects..." oninput="renderGrid()"/>
+  </div>
+  <div class="grid" id="projects-grid"></div>
+</div>
+
+</div>
+
+<div class="modal-wrap" id="modal" onclick="handleBackdrop(event)">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="modal-title">New project</h3>
+      <button class="icon-btn" onclick="closeModal()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="form-row">
+      <div class="fg" style="flex:2">
+        <label>Project name</label>
+        <input id="f-title" type="text" placeholder="e.g. Rocket Guidance System"/>
+      </div>
+      <div class="fg" style="flex:1">
+        <label>Language</label>
+        <select id="f-lang">
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="cpp">C++</option>
+          <option value="c">C</option>
+          <option value="java">Java</option>
+          <option value="bash">Bash</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="sql">SQL</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Project URL (optional)</label>
+      <input id="f-url" type="text" placeholder="https://github.com/you/project"/>
+    </div>
+    <div class="fg">
+      <label>Code snippet</label>
+      <textarea id="f-code" placeholder="Paste your code here..."></textarea>
+    </div>
+    <div class="modal-foot">
+      <button onclick="closeModal()">Cancel</button>
+      <button onclick="saveProject()">Save project</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-msg" id="toast"></div>
+
+<script>
+const PASSWORD = "mycode2024";
+let projects = JSON.parse(localStorage.getItem('codelib_projects') || '[]');
+let editingId = null;
+
+function save(){localStorage.setItem('codelib_projects', JSON.stringify(projects));}
+
+function doLogin(){
+  const v = document.getElementById('pw-input').value;
+  if(v === PASSWORD){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').style.display='flex';
+    renderGrid();
+  } else {
+    document.getElementById('pw-error').style.display='block';
+    document.getElementById('pw-input').value='';
+  }
+}
+
+function doLogout(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-error').style.display='none';
+}
+
+document.getElementById('pw-input').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+function renderGrid(){
+  const q = document.getElementById('search-input').value.toLowerCase();
+  const filtered = projects.filter(p=>p.title.toLowerCase().includes(q));
+  const g = document.getElementById('projects-grid');
+  document.getElementById('count-badge').textContent = `${projects.length} project${projects.length!==1?'s':''}`;
+
+  if(!filtered.length){
+    g.innerHTML = `<div class="empty-state"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg><p>${q ? 'No results found.' : 'No projects yet. Click "+ New project" to add one.'}</p></div>`;
+    return;
+  }
+
+  g.innerHTML = filtered.map(p=>`
+    <div class="project-card">
+      <div class="card-head">
+        <div>
+          <div class="card-name">${esc(p.title)}</div>
+          <div class="card-date">${p.date}</div>
+        </div>
+        <span class="lang-tag">${esc(p.lang)}</span>
+      </div>
+      <div class="card-code">
+        <pre>${esc(p.code)}</pre>
+        <div class="code-fade"></div>
+      </div>
+      <div class="card-foot">
+        ${p.url ? `<a class="card-url" href="${esc(p.url)}" target="_blank">${esc(p.url)}</a>` : `<span class="no-url">no link</span>`}
+        <div class="card-actions">
+          <button class="icon-btn" title="Copy code" onclick="copyCode(${p.id})">
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
+          <button class="icon-btn" title="Edit" onclick="openEdit(${p.id})">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+          </button>
+          <button class="icon-btn del" title="Delete" onclick="deleteProject(${p.id})">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function esc(s=''){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function openModal(id){
+  editingId = id||null;
+  document.getElementById('modal-title').textContent = id ? 'Edit project' : 'New project';
+  if(!id){
+    document.getElementById('f-title').value='';
+    document.getElementById('f-url').value='';
+    document.getElementById('f-code').value='';
+    document.getElementById('f-lang').value='python';
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+function openEdit(id){
+  const p = projects.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('f-title').value=p.title;
+  document.getElementById('f-url').value=p.url||'';
+  document.getElementById('f-code').value=p.code;
+  document.getElementById('f-lang').value=p.lang||'python';
+  openModal(id);
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('open'); editingId=null;}
+function handleBackdrop(e){if(e.target===document.getElementById('modal')) closeModal();}
+
+function saveProject(){
+  const title=document.getElementById('f-title').value.trim();
+  const code=document.getElementById('f-code').value.trim();
+  const url=document.getElementById('f-url').value.trim();
+  const lang=document.getElementById('f-lang').value;
+  if(!title||!code){showToast('Name and code are required.');return;}
+  const now=new Date().toISOString().slice(0,16).replace('T',' ');
+  if(editingId){
+    const p=projects.find(x=>x.id===editingId);
+    if(p){p.title=title;p.code=code;p.url=url;p.lang=lang;}
+  } else {
+    projects.unshift({id:Date.now(),title,code,url,lang,date:now});
+  }
+  save(); closeModal(); renderGrid(); showToast('Project saved!');
+}
+
+function deleteProject(id){
+  if(!confirm('Delete this project?')) return;
+  projects=projects.filter(p=>p.id!==id);
+  save(); renderGrid(); showToast('Deleted.');
+}
+
+function copyCode(id){
+  const p=projects.find(x=>x.id===id);
+  if(!p) return;
+  navigator.clipboard.writeText(p.code).then(()=>showToast('Code copied!'));
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+</script>
