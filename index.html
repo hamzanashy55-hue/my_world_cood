@@ -2,87 +2,69 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Code World | Potter Vault Final IDE</title>
+    <title>Code World | Potter Vault Final</title>
     <style>
-        :root {
-            --gold-color: #d4af37;
-            --bg-dark: #0d1117;
-            --card-bg: #161b22;
-        }
-
+        :root { --gold-color: #d4af37; --bg-dark: #0d1117; --card-bg: #161b22; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { height: 100%; width: 100%; background-color: var(--bg-dark); color: #c9d1d9; font-family: 'Segoe UI', sans-serif; overflow: hidden; perspective: 1000px; cursor: none; }
 
-        body, html {
-            height: 100%; width: 100%;
-            background-color: var(--bg-dark);
-            color: #c9d1d9;
-            font-family: 'Segoe UI', sans-serif;
-            overflow-x: hidden;
-            perspective: 1000px;
-            cursor: none; /* الماوس الذهبي */
-        }
+        /* --- 1. شاشة الترحيب (الرسالة الأصلية) --- */
+        #splash-screen { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 10001; transition: opacity 1s, visibility 1s; }
+        .welcome-msg { font-size: 28px; color: var(--gold-color); text-align: center; font-family: monospace; animation: fadeInOut 2.8s ease-in-out forwards; }
+        @keyframes fadeInOut { 0% { opacity: 0; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.1); } }
 
-        /* --- 1. الماوس (النقطة الذهبية المركزية) --- */
-        .cursor-glow {
-            position: fixed; width: 180px; height: 180px;
-            background: radial-gradient(circle, var(--gold-color) 0%, var(--gold-color) 1.5%, rgba(212, 175, 55, 0.1) 8%, transparent 70%);
-            border-radius: 50%; pointer-events: none; z-index: 10005;
-            transform: translate(-50%, -50%); animation: glowPulse 4s infinite ease-in-out;
-        }
+        /* --- 2. الماوس الذهبي المصغر --- */
+        .cursor-glow { position: fixed; width: 180px; height: 180px; background: radial-gradient(circle, var(--gold-color) 0%, var(--gold-color) 2%, rgba(212, 175, 55, 0.1) 10%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 10005; transform: translate(-50%, -50%); animation: glowPulse 4s infinite ease-in-out; }
         @keyframes glowPulse { 0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } }
 
-        /* --- 2. شاشة الترحيب والخلفية المتنفسة --- */
-        #splash-screen { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 10001; transition: 1s; }
+        /* --- 3. الخلفية وشاشة الدخول --- */
         #bg-image { position: fixed; inset: -50px; background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070') center/cover; z-index: -1; transition: 0.2s ease-out; }
-
-        /* --- 3. شاشة الدخول ولوحة التحكم --- */
         #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card { background: rgba(13, 17, 23, 0.95); padding: 40px; border-radius: 20px; border: 1px solid var(--gold-color); text-align: center; backdrop-filter: blur(10px); width: 360px; }
+        .login-card { background: rgba(13, 17, 23, 0.95); padding: 40px; border-radius: 20px; border: 1px solid var(--gold-color); text-align: center; backdrop-filter: blur(12px); width: 360px; }
+        #pw-input { width: 100%; padding: 12px; margin: 20px 0; background: #000; border: 1px solid #30363d; color: white; text-align: center; border-radius: 8px; }
+
+        /* --- 4. لوحة التحكم --- */
         #dashboard { display: none; padding: 40px 5%; height: 100vh; overflow-y: auto; background: rgba(13, 17, 23, 0.9); }
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
-        .project-card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid #30363d; transition: 0.3s; text-align: center; }
+        .project-card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid #30363d; text-align: center; }
 
-        /* --- 4. نافذة اختيار العرض (Open Option) --- */
+        /* --- 5. نافذة الاختيار --- */
         #choice-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 10002; }
-        .choice-box { background: #161b22; padding: 30px; border-radius: 15px; border: 1px solid var(--gold-color); text-align: center; width: 400px; }
+        .choice-box { background: #161b22; padding: 30px; border-radius: 15px; border: 1px solid var(--gold-color); text-align: center; width: 350px; }
 
-        /* --- 5. الـ IDE المتطور (الكود يسار - العرض يمين) --- */
+        /* --- 6. الـ IDE (كود يسار - عرض يمين) --- */
         #ide-screen { display: none; height: 100vh; flex-direction: column; background: #010409; }
         .ide-header { background: #161b22; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; }
-        .ide-body { display: flex; flex: 1; overflow: hidden; flex-direction: row-reverse; /* لجعل الكود يسار والعرض يمين */ }
-        
-        #editor-part { flex: 1; display: flex; flex-direction: column; border-right: 2px solid #30363d; }
-        #editor-part textarea { flex: 1; background: transparent; color: #79c0ff; padding: 20px; border: none; outline: none; font-family: 'Cascadia Code', monospace; font-size: 14px; resize: none; text-align: left; direction: ltr; }
-        #ai-bar { background: #0d1117; padding: 10px; border-top: 1px solid #30363d; font-size: 12px; color: var(--gold-color); text-align: center; }
-
+        .ide-body { display: flex; flex: 1; overflow: hidden; flex-direction: row-reverse; }
+        #editor-part { flex: 1; display: flex; flex-direction: column; border-right: 1px solid #30363d; }
+        #editor-part textarea { flex: 1; background: transparent; color: #79c0ff; padding: 20px; border: none; outline: none; font-family: monospace; font-size: 14px; resize: none; direction: ltr; }
         #preview-part { flex: 1; background: #000; display: flex; align-items: center; justify-content: center; }
-        .phone-frame { width: 320px; height: 580px; background: #222; border: 12px solid #333; border-radius: 36px; overflow: hidden; position: relative; transition: 0.5s; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
+        .phone-frame { width: 310px; height: 550px; background: #222; border: 10px solid #333; border-radius: 30px; overflow: hidden; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
         .laptop-frame { width: 100% !important; height: 100% !important; border-radius: 0; border: none; }
         iframe { width: 100%; height: 100%; background: white; border: none; }
 
-        /* أزرار --- */
-        button { cursor: pointer; border-radius: 8px; border: none; padding: 10px 20px; font-weight: bold; transition: 0.3s; }
+        button { cursor: pointer; border-radius: 8px; border: none; padding: 10px 20px; font-weight: bold; transition: 0.2s; }
         .btn-gold { background: var(--gold-color); color: #000; }
         .btn-open { background: #238636; color: white; width: 100%; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen"><h1 style="color: var(--gold-color); font-family: monospace;">hello_Eng/potter...</h1></div>
+    <div id="splash-screen"><div class="welcome-msg">hello_Eng/potter<br>welcome to again</div></div>
     <div class="cursor-glow" id="mouse-glow"></div>
     <div id="bg-image"></div>
 
     <div id="login-screen">
         <div class="login-card">
-            <h2>Code World Vault</h2>
-            <p style="color: var(--gold-color); margin-top: 10px;">Hello_Eng/potter</p>
-            <input id="pw-input" type="password" placeholder="Password" style="width: 100%; padding: 12px; margin: 20px 0; background: #000; border: 1px solid #30363d; color: white; text-align: center; border-radius: 8px;">
+            <h2>Code World</h2>
+            <p style="color: var(--gold-color); font-size: 14px; margin-top:5px;">Hello_Eng/potter</p>
+            <input id="pw-input" type="password" placeholder="Password">
             <button class="btn-gold" onclick="doLogin()" style="width: 100%">Unlock Vault</button>
         </div>
     </div>
 
     <div id="dashboard">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
             <h2 style="color: var(--gold-color);">Projects Vault</h2>
             <button onclick="createNewProject()" class="btn-gold">+ New Project</button>
         </div>
@@ -92,45 +74,43 @@
     <div id="choice-modal">
         <div class="choice-box">
             <h3 style="color: var(--gold-color); margin-bottom: 20px;">كيف تود فتح المشروع؟</h3>
-            <div style="display: flex; gap: 15px; justify-content: center;">
+            <div style="display: flex; gap: 10px; justify-content: center;">
                 <button onclick="launchIDE('phone')" style="background: #333; color: white;">📱 Phone View</button>
                 <button onclick="launchIDE('laptop')" style="background: #333; color: white;">💻 Laptop View</button>
             </div>
-            <button onclick="hideChoice()" style="margin-top: 20px; background: transparent; color: #888; font-size: 12px;">إغلاق</button>
+            <button onclick="hideChoice()" style="margin-top: 15px; background: transparent; color: #555;">إلغاء</button>
         </div>
     </div>
 
     <div id="ide-screen">
         <div class="ide-header">
             <button onclick="closeIDE()" style="background: #da3637; color: white;">← Back</button>
-            <h3 id="ide-title" style="color: var(--gold-color);">IDE Editor</h3>
-            <button onclick="saveProjectCode()" class="btn-gold">Save & Sync</button>
+            <h3 id="ide-title" style="color: var(--gold-color);">Editor</h3>
+            <button onclick="saveToVault()" class="btn-gold">Save Changes</button>
         </div>
         <div class="ide-body">
-            <div id="preview-part">
-                <div id="display-frame" class="phone-frame">
-                    <iframe id="live-iframe"></iframe>
-                </div>
-            </div>
+            <div id="preview-part"><div id="display-frame" class="phone-frame"><iframe id="live-iframe"></iframe></div></div>
             <div id="editor-part">
-                <textarea id="live-code-editor" oninput="syncLive()" placeholder="اكتب الكود هنا..."></textarea>
-                <div id="ai-bar">✨ AI Assistant: Code Analysis Active</div>
+                <textarea id="code-editor" oninput="syncLive()" placeholder="اكتب الكود هنا..."></textarea>
+                <div id="ai-bar" style="background:#0d1117; padding:8px; font-size:11px; color:var(--gold-color); text-align:center;">✨ AI Assistant Active</div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- الماوس والتفاعل ---
         const glow = document.getElementById('mouse-glow');
         window.addEventListener('mousemove', (e) => {
             glow.style.left = e.clientX + 'px'; glow.style.top = e.clientY + 'px';
-            const x = (window.innerWidth/2 - e.clientX)/60;
-            const y = (window.innerHeight/2 - e.clientY)/60;
-            const bg = document.getElementById('bg-image');
-            if(bg) bg.style.transform = `scale(1.1) translate(${x}px, ${y}px)`;
+            const x = (window.innerWidth/2 - e.clientX)/70;
+            const y = (window.innerHeight/2 - e.clientY)/70;
+            document.getElementById('bg-image').style.transform = `scale(1.1) translate(${x}px, ${y}px)`;
         });
 
-        // --- نظام البيانات والدخول ---
+        // تفعيل الـ Enter للدخول
+        document.getElementById('pw-input').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') doLogin();
+        });
+
         let projects = JSON.parse(localStorage.getItem('potter_vault_data')) || [];
         let activeIdx = null;
 
@@ -149,21 +129,12 @@
             projects.forEach((p, i) => {
                 const card = document.createElement('div');
                 card.className = 'project-card';
-                card.innerHTML = `
-                    <h3 style="color:white; margin-bottom:5px;">${p.name}</h3>
-                    <p style="font-size:11px; color:#8b949e;">Modified: ${p.date}</p>
-                    <button class="btn-open" onclick="showChoice(${i})">Open Vault</button>
-                    <button onclick="deleteProj(${i})" style="background:transparent; color:#da3637; font-size:11px; margin-top:10px;">Delete</button>
-                `;
+                card.innerHTML = `<h3>${p.name}</h3><button class="btn-open" onclick="showChoice(${i})">Open Vault</button>`;
                 grid.appendChild(card);
             });
         }
 
-        // --- التحكم في الاختيار والـ IDE ---
-        function showChoice(i) {
-            activeIdx = i;
-            document.getElementById('choice-modal').style.display = 'flex';
-        }
+        function showChoice(i) { activeIdx = i; document.getElementById('choice-modal').style.display = 'flex'; }
         function hideChoice() { document.getElementById('choice-modal').style.display = 'none'; }
 
         function launchIDE(mode) {
@@ -172,59 +143,31 @@
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('ide-screen').style.display = 'flex';
             document.getElementById('ide-title').innerText = p.name;
-            document.getElementById('live-code-editor').value = p.code || '\n<h1>Welcome</h1>';
-            
-            const frame = document.getElementById('display-frame');
-            frame.className = (mode === 'laptop') ? 'laptop-frame' : 'phone-frame';
-            
+            document.getElementById('code-editor').value = p.code || '<h1>Welcome, Potter</h1>';
+            document.getElementById('display-frame').className = (mode === 'laptop') ? 'laptop-frame' : 'phone-frame';
             syncLive();
         }
 
-        function syncLive() {
-            const code = document.getElementById('live-code-editor').value;
-            document.getElementById('live-iframe').srcdoc = code;
-            
-            // AI Simulation
-            const ai = document.getElementById('ai-bar');
-            if(code.includes('if') && !code.includes(':')) ai.innerHTML = "✨ AI: <span style='color:#f85149'>Syntax Error: Line ? Missing ':'</span>";
-            else ai.innerHTML = "✨ AI: <span style='color:#3fb950'>Code logic 100% Correct.</span>";
-        }
+        function syncLive() { document.getElementById('live-iframe').srcdoc = document.getElementById('code-editor').value; }
 
-        function saveProjectCode() {
-            projects[activeIdx].code = document.getElementById('live-code-editor').value;
-            projects[activeIdx].date = new Date().toLocaleString();
+        function saveToVault() {
+            projects[activeIdx].code = document.getElementById('code-editor').value;
             localStorage.setItem('potter_vault_data', JSON.stringify(projects));
-            alert("تم حفظ التعديلات في الخزنة!");
+            alert("Saved to Vault!");
         }
 
-        function closeIDE() {
-            document.getElementById('ide-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            renderProjects();
-        }
-
+        function closeIDE() { document.getElementById('ide-screen').style.display = 'none'; document.getElementById('dashboard').style.display = 'block'; renderProjects(); }
+        
         function createNewProject() {
             const name = prompt("Project Name:");
-            if(name) {
-                projects.push({ name, code: '', date: new Date().toLocaleString() });
-                localStorage.setItem('potter_vault_data', JSON.stringify(projects));
-                renderProjects();
-            }
-        }
-
-        function deleteProj(i) {
-            if(confirm("Are you sure?")) {
-                projects.splice(i, 1);
-                localStorage.setItem('potter_vault_data', JSON.stringify(projects));
-                renderProjects();
-            }
+            if(name) { projects.push({ name, code: '' }); localStorage.setItem('potter_vault_data', JSON.stringify(projects)); renderProjects(); }
         }
 
         window.onload = () => {
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 setTimeout(() => document.getElementById('splash-screen').style.visibility = 'hidden', 1000);
-            }, 2500);
+            }, 3000);
         };
     </script>
 </body>
