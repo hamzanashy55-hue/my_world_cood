@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Code World Vault</title>
+  <title>Code World Vault | Potter</title>
   <style>
     :root {
       --gold-color: #d4af37;
@@ -19,28 +19,20 @@
       background-color: var(--bg-dark);
       color: #c9d1d9;
       overflow-x: hidden;
-      cursor: crosshair; /* ماوس احترافي */
+      perspective: 1000px; /* ضروري لتأثير التنفس ثلاثي الأبعاد */
+      cursor: none; /* هنخفي الماوس عشان نحط الأنيميشن مكانه */
     }
 
-    /* --- 1. شاشة الترحيب (Splash Screen) --- */
+    /* --- 1. شاشة الترحيب --- */
     #splash-screen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 1s, visibility 1s;
+      position: fixed; inset: 0; background: #000;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; transition: opacity 1s, visibility 1s;
     }
 
     .welcome-msg {
-      font-size: 26px;
-      color: var(--gold-color);
-      text-align: center;
-      letter-spacing: 2px;
-      font-family: var(--font-mono);
-      animation: fadeInOut 2.8s ease-in-out forwards;
+      font-size: 28px; color: var(--gold-color); text-align: center;
+      font-family: var(--font-mono); animation: fadeInOut 2.8s ease-in-out forwards;
     }
 
     @keyframes fadeInOut {
@@ -49,51 +41,41 @@
       100% { opacity: 0; transform: scale(1.1); }
     }
 
-    /* --- 2. أنيميشن الماوس (Mouse Trail) --- */
-    .trail {
-      position: fixed;
-      width: 10px;
-      height: 10px;
-      background: var(--gold-color);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 10000;
-      opacity: 0.6;
-      filter: blur(2px);
+    /* --- 2. أنيميشن الماوس الجديد (Glow & Breathing) --- */
+    .cursor-glow {
+      position: fixed; width: 150px; height: 150px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.15) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%); mix-blend-mode: screen;
     }
 
-    /* --- 3. شاشة الدخول --- */
+    .trail-dot {
+      position: fixed; width: 8px; height: 8px;
+      background: var(--gold-color); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      filter: drop-shadow(0 0 5px var(--gold-color));
+    }
+
+    /* --- 3. شاشة الدخول (تأثير التنفس) --- */
     #login-screen {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       min-height: 100vh;
       background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
-      background-size: cover;
-      background-position: center;
+      background-size: cover; background-position: center;
     }
 
     #login-card {
-      background: rgba(13, 17, 23, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      border-radius: 15px;
-      border: 1px solid #30363d;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px);
+      padding: 40px; border-radius: 20px; border: 1px solid #30363d;
+      text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      transition: transform 0.1s ease-out; /* حركة ناعمة للتنفس */
     }
 
-    #login-card h2 { margin-bottom: 10px; }
-
     .subtitle-gold {
-      color: var(--gold-color);
-      font-size: 14px;
-      margin-bottom: 25px;
+      color: var(--gold-color); font-size: 15px; margin-bottom: 25px;
       background: linear-gradient(90deg, #d4af37, #fff, #d4af37);
-      background-size: 200% auto;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: shine 3s linear infinite;
+      background-size: 200% auto; -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; animation: shine 3s linear infinite;
     }
     @keyframes shine { to { background-position: -200% center; } }
 
@@ -103,17 +85,13 @@
       text-align: center; margin-bottom: 15px; border-radius: 8px;
     }
 
-    /* --- 4. لوحة التحكم (الداخلية) --- */
-    #dashboard { display: none; padding: 20px 5%; }
-
-    .topbar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 20px 0; border-bottom: 1px solid #30363d; margin-bottom: 30px;
-    }
-
+    /* --- 4. لوحة التحكم --- */
+    #dashboard { display: none; padding: 20px 5%; transition: background-position 0.2s; }
+    
     .project-card {
       background: var(--card-bg); border: 1px solid #30363d;
-      border-radius: 10px; margin-bottom: 20px; overflow: hidden;
+      border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+      transition: transform 0.1s ease-out;
     }
 
     .card-code { background: #010409; padding: 15px; border-top: 1px solid #30363d; }
@@ -121,27 +99,21 @@
 
     button {
       background: #238636; color: white; border: none;
-      padding: 10px 20px; border-radius: 6px; cursor: pointer;
+      padding: 10px 20px; border-radius: 8px; cursor: pointer; transition: 0.2s;
     }
-    button:hover { background: #2ea043; }
+    button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(35, 134, 54, 0.4); }
 
-    .search-input {
-      width: 100%; padding: 12px; background: #161b22;
-      border: 1px solid #30363d; color: white; border-radius: 8px; margin-bottom: 20px;
-    }
   </style>
 </head>
 <body>
 
   <div id="splash-screen">
-    <div class="welcome-msg">
-      hello_Eng/potter<br>welcome to again
-    </div>
+    <div class="welcome-msg">hello_Eng/potter<br>welcome to again</div>
   </div>
 
   <div id="login-screen">
     <div id="login-card">
-      <h2>Code World</h2>
+      <h2 style="margin-bottom:10px;">Code World</h2>
       <p class="subtitle-gold">Hello_Eng/potter</p>
       <input id="pw-input" type="password" placeholder="Password">
       <button onclick="doLogin()" style="width: 100%">Unlock Vault</button>
@@ -149,30 +121,69 @@
   </div>
 
   <div id="dashboard">
-    <div class="topbar">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; border-bottom:1px solid #30363d; padding-bottom:20px;">
       <h2>Code World Vault</h2>
-      <div>
-        <button onclick="location.reload()" style="background: #da3637;">Logout</button>
-      </div>
+      <button onclick="location.reload()" style="background: #da3637;">Logout</button>
     </div>
-    
-    <input type="text" class="search-input" placeholder="البحث في مشاريعك...">
     
     <div id="projects-grid">
       <div class="project-card">
-        <div style="padding:15px"><b>Example Project</b></div>
-        <div class="card-code"><pre><code>print("Welcome back, Potter!")</code></pre></div>
+        <div style="padding:15px"><b>System Interactive</b></div>
+        <div class="card-code"><pre><code>// الصفحة الآن تتنفس معك يا potter
+console.log("Status: Immersive Mode Active");</code></pre></div>
       </div>
     </div>
   </div>
 
   <script>
-    // 1. Enter من الكيبورد
+    // --- 1. تأثير التنفس (Parallax Tilt) ---
+    window.addEventListener('mousemove', (e) => {
+      const x = (window.innerWidth / 2 - e.clientX) / 50;
+      const y = (window.innerHeight / 2 - e.clientY) / 50;
+
+      const elements = document.querySelectorAll('#login-card, .project-card');
+      elements.forEach(el => {
+        if(el) el.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+      });
+    });
+
+    // --- 2. أنيميشن الماوس المتطور ---
+    const glow = document.createElement('div');
+    glow.className = 'cursor-glow';
+    document.body.appendChild(glow);
+
+    const dots = [];
+    for(let i=0; i<8; i++) {
+      const d = document.createElement('div');
+      d.className = 'trail-dot';
+      document.body.appendChild(d);
+      dots.push(d);
+    }
+
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      glow.style.left = mx + 'px'; glow.style.top = my + 'px';
+    });
+
+    function animate() {
+      let x = mx, y = my;
+      dots.forEach((d, i) => {
+        d.style.left = x + 'px'; d.style.top = y + 'px';
+        d.style.opacity = 1 - (i / dots.length);
+        let next = dots[i+1] || dots[0];
+        x += (next.offsetLeft - x) * 0.4;
+        y += (next.offsetTop - y) * 0.4;
+      });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // --- 3. منطق الدخول ---
     document.getElementById('pw-input').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') doLogin();
     });
 
-    // 2. كود الدخول
     function doLogin() {
       if(document.getElementById('pw-input').value === 'nashy') {
         document.getElementById('login-screen').style.display = 'none';
@@ -183,7 +194,6 @@
       }
     }
 
-    // 3. إخفاء الترحيب
     window.onload = () => {
       setTimeout(() => {
         const s = document.getElementById('splash-screen');
@@ -191,30 +201,6 @@
         setTimeout(() => s.style.visibility = 'hidden', 1000);
       }, 3000);
     };
-
-    // 4. أنيميشن الماوس
-    const dots = [];
-    for(let i=0; i<12; i++) {
-      const d = document.createElement('div');
-      d.className = 'trail';
-      document.body.appendChild(d);
-      dots.push(d);
-    }
-
-    let mx = 0, my = 0;
-    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
-
-    function render() {
-      let x = mx, y = my;
-      dots.forEach((d, i) => {
-        d.style.left = x + 'px'; d.style.top = y + 'px';
-        let next = dots[i+1] || dots[0];
-        x += (next.offsetLeft - x) * 0.35;
-        y += (next.offsetTop - y) * 0.35;
-      });
-      requestAnimationFrame(render);
-    }
-    render();
   </script>
 </body>
 </html>
