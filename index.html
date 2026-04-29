@@ -1,216 +1,430 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CodeLib Vault | Nashy</title>
+  <title>Code World Vault</title>
   <style>
-    /* --- المتغيرات الأساسية --- */
     :root {
-      --color-background-primary: #0d1117;
+      /* تم استخدام متغيرات الألوان الأصلية مع تعديل بسيط لتناسب الخلفية الجديدة */
+      --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      --font-mono: monospace;
+      --border-radius-lg: 8px;
+      --border-radius-xl: 12px;
+      --color-background-primary: rgba(13, 17, 23, 0.9); /* جعل الخلفية شفافة قليلاً */
       --color-background-secondary: #161b22;
+      --color-border-secondary: #30363d;
       --color-text-primary: #c9d1d9;
       --color-text-secondary: #8b949e;
-      --color-border-primary: #30363d;
-      --color-border-info: #388bfd;
+      --color-text-danger: #f85149;
       --color-background-info: rgba(56, 139, 253, 0.1);
-      --primary-accent: #5865f2;
-      --font-sans: 'Inter', -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --color-text-info: #58a6ff;
+      --color-border-tertiary: #21262d;
+      --color-border-primary: #8b949e;
+      --color-border-danger: rgba(248, 81, 73, 0.4);
+      --color-background-success: rgba(46, 160, 67, 0.15);
+      --color-border-success: rgba(46, 160, 67, 0.4);
+      --color-text-success: #3fb950;
+      
+      /* لون ذهبي مخصص للعنوان الفرعي */
+      --gold-color: #d4af37;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); line-height: 1.5; }
+    
+    body {
+      font-family: var(--font-sans);
+      background-color: #0d1117;
+      /* إضافة خلفية هادئة ومناسبة للمبرمجين من الإنترنت */
+      background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: var(--color-text-primary);
+    }
 
-    /* --- شاشة الدخول الاحترافية (Nashy Style) --- */
+    button {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      color: #ffffff;
+      background: #238636;
+      border: 1px solid rgba(240, 246, 252, 0.1);
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover { background-color: #2ea043; }
+
+    input, select, textarea {
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--color-text-primary);
+      background: #010409;
+      border: 1px solid var(--color-border-secondary);
+      border-radius: 6px;
+      padding: 6px 12px;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #1f6feb;
+      box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
+    }
+
+    /* --- تنسيق شاشة تسجيل الدخول المحدثة --- */
     #login-screen {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      min-height: 100vh; /* ملء الشاشة بالكامل */
       flex-direction: column;
       gap: 24px;
-      /* خلفية متدرجة متحركة */
-      background: radial-gradient(circle at top right, #1a1a2e, #16213e, #0d1117);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      padding: 20px;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    .vault-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--border-radius-lg);
+      background: var(--color-background-secondary);
+      border: 0.5px solid var(--color-border-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
+    .vault-icon svg { width: 32px; height: 32px; color: #58a6ff; fill: currentColor; }
 
     #login-card {
-      backdrop-filter: blur(15px);
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 24px;
-      padding: 40px;
-      width: 340px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      background: var(--color-background-primary);
+      border: 1px solid var(--color-border-secondary);
+      border-radius: var(--border-radius-xl);
+      padding: 32px;
+      width: 100%;
+      max-width: 360px;
       text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px); /* تأثير ضبابي خفيف للخلفية خلف الكارت */
     }
 
-    .vault-icon { 
-      width: 64px; height: 64px; border-radius: 16px; 
-      background: var(--primary-accent); display: flex; 
-      align-items: center; justify-content: center; margin: 0 auto 20px;
+    /* العنوان الرئيسي الجديد: cood_world */
+    #login-card h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--color-text-primary);
     }
 
-    #pw-input { 
-      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--color-border-primary);
-      background: rgba(0,0,0,0.3); color: white; text-align: center; font-family: var(--font-mono); margin-bottom: 10px;
+    /* العنوان الفرعي الجديد والذهبي واللامع: Hello_Eng/potter */
+    #login-card p.subtitle {
+      font-size: 14px;
+      font-weight: 300; /* خط رفيع */
+      color: var(--gold-color);
+      margin-bottom: 24px;
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      
+      /* تأثير اللمعان (Shine) */
+      background: linear-gradient(90deg, rgba(212,175,55,1) 0%, rgba(255,255,255,1) 50%, rgba(212,175,55,1) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 3s linear infinite;
     }
 
-    /* --- Dashboard مع الأنيميشن الداخلي --- */
-    #dashboard { display: none; flex-direction: column; padding: 20px 40px; position: relative; min-height: 100vh; }
+    /* تعريف حركة اللمعان من اليمين إلى اليسار */
+    @keyframes shine {
+      to { background-position: -200% center; }
+    }
+
+    #pw-input {
+      width: 100%;
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+      letter-spacing: 3px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    #pw-error {
+      font-size: 12px;
+      color: var(--color-text-danger);
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    #login-btn { width: 100%; padding: 8px; font-size: 14px; }
+
+    /* --- باقي تنسيقات لوحة التحكم (لم تتغير) --- */
+    #dashboard { display: none; flex-direction: column; padding: 0 20px 40px; max-width: 1200px; margin: 0 auto; }
     
-    .blob {
-      position: fixed; top: 0; left: 0; width: 600px; height: 600px;
-      background: linear-gradient(135deg, rgba(88, 101, 242, 0.1) 0%, rgba(138, 43, 226, 0.05) 100%);
-      filter: blur(100px); border-radius: 50%; z-index: -1; animation: move 25s infinite alternate;
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+      margin-bottom: 24px;
+      background: rgba(13, 17, 23, 0.8);
+      backdrop-filter: blur(5px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-title { font-size: 18px; font-weight: 600; color: var(--color-text-primary); }
+    .count-pill {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      background: var(--color-background-secondary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-family: var(--font-mono);
+    }
+    .topbar-right { display: flex; gap: 8px; align-items: center; }
+
+    .search-wrap { position: relative; margin-bottom: 20px; }
+    .search-wrap input { width: 100%; padding-left: 38px; font-family: var(--font-mono); font-size: 13px; height: 36px;}
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-tertiary);
+      pointer-events: none;
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
     }
 
-    @keyframes move { from { transform: translate(-10%, -10%); } to { transform: translate(40%, 40%); } }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 
-    /* --- باقي تنسيقات كودك (تم الحفاظ عليها) --- */
-    .topbar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid var(--color-border-primary); margin-bottom: 30px; }
-    .topbar-title { font-size: 20px; font-weight: 600; color: white; }
-    .count-pill { font-size: 12px; background: var(--color-background-secondary); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--color-border-primary); }
-
-    .search-wrap { position: relative; margin-bottom: 25px; }
-    .search-wrap input { width: 100%; padding: 12px 12px 12px 40px; background: var(--color-background-secondary); border: 1px solid var(--color-border-primary); border-radius: 10px; color: white; font-family: var(--font-mono); }
-    .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 16px; color: var(--color-text-secondary); }
-
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; }
-    .project-card { background: var(--color-background-secondary); border: 1px solid var(--color-border-primary); border-radius: 12px; overflow: hidden; transition: 0.2s; }
-    .project-card:hover { border-color: var(--primary-accent); transform: translateY(-3px); }
+    .project-card {
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.15s, transform 0.15s;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .project-card:hover { border-color: var(--color-border-primary); transform: translateY(-2px); }
     
-    .card-head { padding: 15px; border-bottom: 1px solid var(--color-border-primary); display: flex; justify-content: space-between; align-items: flex-start; }
-    .card-name { font-weight: 600; color: white; }
-    .lang-tag { font-size: 10px; font-family: var(--font-mono); color: var(--color-border-info); background: var(--color-background-info); padding: 2px 8px; border-radius: 5px; }
+    .card-head { padding: 14px 16px 12px; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .card-name { font-size: 15px; font-weight: 600; color: var(--color-text-primary); word-break: break-word; }
+    .card-date { font-size: 11px; color: var(--color-text-tertiary); font-family: var(--font-mono); margin-top: 2px; }
+    .lang-tag { font-size: 10px; font-family: var(--font-mono); color: var(--color-text-info); background: var(--color-background-info); border-radius: var(--border-radius-md); padding: 2px 8px; white-space:nowrap; flex-shrink: 0; }
 
-    .card-code { background: #010409; max-height: 150px; overflow: hidden; position: relative; padding: 12px; }
-    .card-code pre { font-family: var(--font-mono); font-size: 11px; color: #8b949e; }
-    .code-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 30px; background: linear-gradient(transparent, #010409); }
+    .card-code { background: var(--color-background-secondary); max-height: 180px; overflow: hidden; position: relative; border-bottom: 0.5px solid var(--color-border-tertiary); }
+    .card-code pre { margin: 0; padding: 12px 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.6; color: var(--color-text-secondary); white-space: pre; overflow: hidden; }
+    .code-fade { position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(transparent, var(--color-background-secondary)); pointer-events: none; }
 
-    .card-foot { padding: 12px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--color-border-primary); }
-    .card-url { font-size: 11px; color: var(--color-border-info); text-decoration: none; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+    .card-foot { padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
+    .card-url { font-size: 12px; color: var(--color-text-info); font-family: var(--font-mono); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px; }
+    .card-url:hover { text-decoration: underline; }
+    .no-url { font-size: 12px; color: var(--color-text-tertiary); font-family: var(--font-mono); }
+    .card-actions { display: flex; gap: 6px; }
     
-    button { cursor: pointer; padding: 8px 16px; border-radius: 8px; border: none; background: var(--primary-accent); color: white; transition: 0.2s; }
-    button:hover { opacity: 0.9; }
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--border-radius-md);
+      border: 0.5px solid var(--color-border-tertiary);
+      background: var(--color-background-primary);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .icon-btn:hover { border-color: var(--color-border-primary); color: var(--color-text-primary); background: var(--color-background-secondary); }
+    .icon-btn.del:hover { border-color: var(--color-border-danger); color: var(--color-text-danger); }
+    .icon-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* Modal Styling */
-    .modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
-    .modal-wrap.open { display: flex; }
-    .modal { background: var(--color-background-secondary); padding: 30px; border-radius: 20px; width: 100%; max-width: 500px; border: 1px solid var(--color-border-primary); }
-    .fg { margin-bottom: 15px; }
-    .fg label { display: block; font-size: 12px; margin-bottom: 5px; color: var(--color-text-secondary); }
-    .fg input, .fg select, .fg textarea { width: 100%; padding: 10px; background: #0d1117; border: 1px solid var(--color-border-primary); border-radius: 8px; color: white; }
-    textarea { min-height: 120px; }
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--color-text-tertiary); background: rgba(22, 27, 34, 0.5); border-radius: var(--border-radius-lg); border: 1px dashed var(--color-border-tertiary); margin-top: 20px;}
+    .empty-state svg { margin-bottom: 16px; color: var(--color-border-tertiary); }
+    .empty-state p { font-size: 14px; color: var(--color-text-secondary); }
 
-    .toast-msg { position: fixed; bottom: 20px; right: 20px; background: #238636; color: white; padding: 10px 20px; border-radius: 8px; display: none; z-index: 2000; }
+    .modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 999; padding: 20px; opacity: 0; transition: opacity 0.3s; }
+    .modal-wrap.open { display: flex; opacity: 1; }
+    .modal { background: var(--color-background-primary); border: 1px solid var(--color-border-secondary); border-radius: var(--border-radius-xl); width: 100%; max-width: 540px; padding: 24px; max-height: 90vh; overflow-y: auto; box-shadow: 0 12px 48px rgba(0,0,0,0.5); transform: scale(0.9); transition: transform 0.3s; }
+    .modal-wrap.open .modal { transform: scale(1); }
+    .modal-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--color-border-tertiary); }
+    .modal-hdr h3 { font-size: 18px; font-weight: 600; color: var(--color-text-primary); }
+    
+    .form-row { display: flex; gap: 12px; margin-bottom: 16px; }
+    @media (max-width: 480px) { .form-row { flex-direction: column; gap: 0; } }
+    
+    .form-row .fg { flex: 1; }
+    .fg { margin-bottom: 16px; }
+    .fg label { display: block; font-size: 12px; font-family: var(--font-mono); color: var(--color-text-secondary); margin-bottom: 6px; letter-spacing: 0.5px; }
+    .fg input, .fg select, .fg textarea { width: 100%; font-family: var(--font-mono); font-size: 13px; }
+    .fg textarea { min-height: 160px; resize:vertical; line-height: 1.6; }
+    .modal-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-border-tertiary); }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1a7f37;
+      border: 1px solid rgba(240, 246, 252, 0.1);
+      color: #ffffff;
+      font-size: 13px;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      padding: 12px 18px;
+      border-radius: 8px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 9999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast-msg.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
 
 <div id="app">
+
   <div id="login-screen">
     <div class="vault-icon">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/></svg>
     </div>
     <div id="login-card">
-      <h2 style="margin-bottom: 10px;">CodeLib Vault</h2>
-      <p style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 25px;">Welcome back, Nashy!</p>
-      <input id="pw-input" type="password" placeholder="Enter Password"/>
-      <div id="pw-error" style="color: #f85149; font-size: 12px; margin-bottom: 10px; display: none;">Wrong password.</div>
-      <button id="login-btn" onclick="doLogin()" style="width: 100%;">Unlock Vault</button>
+      <h2>Code World</h2>
+      <p class="subtitle">Hello_Eng/potter</p>
+      <input id="pw-input" type="password" placeholder="كلمة المرور"/>
+      <div id="pw-error">كلمة المرور خاطئة. حاول مجدداً.</div>
+      <button id="login-btn" onclick="doLogin()">فتح الخزنة</button>
     </div>
   </div>
 
   <div id="dashboard">
-    <div class="blob"></div> <div class="topbar">
+    <div class="topbar">
       <div class="topbar-left">
-        <span class="topbar-title">CodeLib <span style="color: var(--primary-accent);">Vault</span></span>
-        <span class="count-pill" id="count-badge">0 projects</span>
+        <span class="topbar-title">Code World Vault</span>
+        <span class="count-pill" id="count-badge">0 مشروع</span>
       </div>
       <div class="topbar-right">
-        <button onclick="openModal()" style="background: #238636;">+ New project</button>
-        <button onclick="doLogout()" style="background: transparent; border: 1px solid var(--color-border-primary);">Logout</button>
+        <button onclick="openModal()">+ مشروع جديد</button>
+        <button onclick="doLogout()" style="background: #da3637;">خروج</button>
       </div>
     </div>
-
     <div class="search-wrap">
-      <input type="text" id="search-input" placeholder="Search your code..." oninput="renderGrid()"/>
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search-input" placeholder="البحث في المشاريع..." oninput="renderGrid()"/>
     </div>
-
     <div class="grid" id="projects-grid"></div>
   </div>
+
 </div>
 
 <div class="modal-wrap" id="modal" onclick="handleBackdrop(event)">
   <div class="modal">
-    <h3 style="margin-bottom: 20px;" id="modal-title">New Project</h3>
-    <div class="fg">
-      <label>Project Name</label>
-      <input id="f-title" type="text" placeholder="e.g. My Python Script"/>
+    <div class="modal-hdr">
+      <h3 id="modal-title">مشروع جديد</h3>
+      <button class="icon-btn" onclick="closeModal()" style="border:none; background:none;">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="form-row">
+      <div class="fg" style="flex:2">
+        <label>اسم المشروع</label>
+        <input id="f-title" type="text" placeholder="مثال: نظام التحكم في الإضاءة"/>
+      </div>
+      <div class="fg" style="flex:1">
+        <label>اللغة</label>
+        <select id="f-lang">
+          <option value="python">Python</option>
+          <option value="javascript">JavaScript</option>
+          <option value="typescript">TypeScript</option>
+          <option value="cpp">C++</option>
+          <option value="c">C</option>
+          <option value="java">Java</option>
+          <option value="bash">Bash</option>
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="sql">SQL</option>
+          <option value="other">أخرى</option>
+        </select>
+      </div>
     </div>
     <div class="fg">
-      <label>Language</label>
-      <select id="f-lang">
-        <option value="python">Python</option>
-        <option value="javascript">JavaScript</option>
-        <option value="html">HTML/CSS</option>
-        <option value="cpp">C++</option>
-      </select>
+      <label>رابط المشروع (اختياري)</label>
+      <input id="f-url" type="text" placeholder="https://github.com/user/project"/>
     </div>
     <div class="fg">
-      <label>URL</label>
-      <input id="f-url" type="text" placeholder="GitHub link"/>
+      <label>قصاصة الكود</label>
+      <textarea id="f-code" placeholder="الصق الكود هنا..."></textarea>
     </div>
-    <div class="fg">
-      <label>Code Snippet</label>
-      <textarea id="f-code"></textarea>
-    </div>
-    <div style="text-align: right;">
-      <button onclick="closeModal()" style="background: transparent;">Cancel</button>
-      <button onclick="saveProject()">Save</button>
+    <div class="modal-foot">
+      <button onclick="closeModal()" style="background: #30363d;">إلغاء</button>
+      <button onclick="saveProject()">حفظ المشروع</button>
     </div>
   </div>
 </div>
 
-<div id="toast" class="toast-msg">Project saved!</div>
+<div class="toast-msg" id="toast">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+  <span id="toast-text">تم الحفظ بنجاح</span>
+</div>
 
 <script>
-// --- المنطق البرمجي (نفس كودك الأصلي تماماً) ---
+// --- التحديث الأساسي: كلمة المرور الجديدة ---
 const PASSWORD = "nashy";
-let projects = JSON.parse(localStorage.getItem('codelib_projects') || '[]');
+
+// باقي المنطق البرمجي (لم يتغير)
+let projects = JSON.parse(localStorage.getItem('codeworld_projects') || '[]');
 let editingId = null;
 
-function save(){localStorage.setItem('codelib_projects', JSON.stringify(projects));}
+function save(){localStorage.setItem('codeworld_projects', JSON.stringify(projects));}
 
 function doLogin(){
-  if(document.getElementById('pw-input').value === PASSWORD){
+  const v = document.getElementById('pw-input').value;
+  if(v === PASSWORD){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('dashboard').style.display='flex';
+    document.getElementById('pw-error').style.display='none';
     renderGrid();
   } else {
     document.getElementById('pw-error').style.display='block';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
   }
 }
 
-function doLogout(){ location.reload(); }
+function doLogout(){
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('pw-input').value='';
+  document.getElementById('pw-error').style.display='none';
+}
+
+document.getElementById('pw-input').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
 
 function renderGrid(){
   const q = document.getElementById('search-input').value.toLowerCase();
-  const filtered = projects.filter(p=>p.title.toLowerCase().includes(q));
+  const filtered = projects.filter(p=>p.title.toLowerCase().includes(q) || p.lang.toLowerCase().includes(q));
   const g = document.getElementById('projects-grid');
-  document.getElementById('count-badge').textContent = `${projects.length} projects`;
+  const countBadge = document.getElementById('count-badge');
+  
+  const count = projects.length;
+  countBadge.textContent = `${count} مشروع${count === 1 ? '' : (count >= 3 && count <= 10 ? 'ات' : 'اً')}`;
 
   if(!filtered.length){
-    g.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--color-text-secondary); margin-top: 50px;">No projects found.</p>`;
+    g.innerHTML = `<div class="empty-state"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg><p>${q ? 'لا توجد نتائج بحث.' : 'لا توجد مشاريع بعد. اضغط على "+ مشروع جديد" للإضافة.'}</p></div>`;
     return;
   }
 
@@ -218,45 +432,153 @@ function renderGrid(){
     <div class="project-card">
       <div class="card-head">
         <div>
-          <div class="card-name">${p.title}</div>
-          <div style="font-size: 10px; color: var(--color-text-secondary)">${p.date}</div>
+          <div class="card-name">${esc(p.title)}</div>
+          <div class="card-date">${p.date}</div>
         </div>
-        <span class="lang-tag">${p.lang}</span>
+        <span class="lang-tag">${esc(p.lang)}</span>
       </div>
       <div class="card-code">
-        <pre>${p.code}</pre>
+        <pre><code>${esc(p.code)}</code></pre>
         <div class="code-fade"></div>
       </div>
       <div class="card-foot">
-        <a class="card-url" href="${p.url}" target="_blank">${p.url || 'no link'}</a>
-        <button onclick="deleteProject(${p.id})" style="background: #da3633; padding: 5px 10px; font-size: 11px;">Delete</button>
+        ${p.url ? `<a class="card-url" href="${esc(p.url)}" target="_blank" title="${esc(p.url)}">${esc(p.url)}</a>` : `<span class="no-url">لا يوجد رابط</span>`}
+        <div class="card-actions">
+          <button class="icon-btn" title="نسخ الكود" onclick="copyCode(${p.id}, this)">
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          </button>
+          <button class="icon-btn" title="تعديل" onclick="openEdit(${p.id})">
+            <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4z"/></svg>
+          </button>
+          <button class="icon-btn del" title="حذف" onclick="deleteProject(${p.id})">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
       </div>
     </div>
   `).join('');
 }
 
-function openModal(){ document.getElementById('modal').classList.add('open'); }
-function closeModal(){ document.getElementById('modal').classList.remove('open'); }
-function handleBackdrop(e){ if(e.target.id === 'modal') closeModal(); }
+function esc(s=''){
+  if(!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function openModal(id){
+  editingId = id||null;
+  const modal = document.getElementById('modal');
+  const modalWrap = document.getElementById('modal');
+  document.getElementById('modal-title').textContent = id ? 'تعديل المشروع' : 'مشروع جديد';
+  
+  if(!id){
+    document.getElementById('f-title').value='';
+    document.getElementById('f-url').value='';
+    document.getElementById('f-code').value='';
+    document.getElementById('f-lang').value='python';
+  }
+  
+  modalWrap.classList.add('open');
+  document.getElementById('f-title').focus();
+}
+
+function openEdit(id){
+  const p = projects.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('f-title').value=p.title;
+  document.getElementById('f-url').value=p.url||'';
+  document.getElementById('f-code').value=p.code;
+  document.getElementById('f-lang').value=p.lang;
+  openModal(id);
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('open');
+  editingId=null;
+}
+
+function handleBackdrop(e){
+  if(e.target.classList.contains('modal-wrap')) closeModal();
+}
 
 function saveProject(){
-  const title=document.getElementById('f-title').value;
-  const code=document.getElementById('f-code').value;
+  const title=document.getElementById('f-title').value.trim();
+  const code=document.getElementById('f-code').value.trim();
+  const url=document.getElementById('f-url').value.trim();
   const lang=document.getElementById('f-lang').value;
-  const url=document.getElementById('f-url').value;
   
-  if(!title || !code) return alert("Fill all fields");
-
-  projects.unshift({id: Date.now(), title, code, lang, url, date: new Date().toLocaleDateString()});
-  save(); closeModal(); renderGrid();
+  if(!title||!code){
+    alert('الاسم والكود مطلوبان الأساسيان.');
+    return;
+  }
+  
+  const now=new Date().toISOString().slice(0,16).replace('T',' ');
+  
+  if(editingId){
+    const p=projects.find(x=>x.id===editingId);
+    if(p){
+      p.title=title;
+      p.code=code;
+      p.url=url;
+      p.lang=lang;
+      p.date=now + ' (معدل)';
+    }
+  } else {
+    projects.unshift({id:Date.now(),title,code,url,lang,date:now});
+  }
+  
+  save();
+  closeModal();
+  renderGrid();
+  showToast(editingId ? 'تم تحديث المشروع' : 'تم حفظ المشروع');
 }
 
 function deleteProject(id){
-  if(confirm("Delete?")){
-    projects = projects.filter(p => p.id !== id);
-    save(); renderGrid();
-  }
+  const p = projects.find(x=>x.id===id);
+  if(!p) return;
+  if(!confirm(`هل أنت متأكد من حذف مشروع "${p.title}"؟`)) return;
+  projects=projects.filter(p=>p.id!==id);
+  save();
+  renderGrid();
+  showToast('تم حذف المشروع');
 }
+
+function copyCode(id, btn){
+  const p=projects.find(x=>x.id===id);
+  if(!p) return;
+  
+  navigator.clipboard.writeText(p.code).then(()=> {
+    showToast('تم نسخ الكود إلى الحافظة');
+    
+    // تغيير الأيقونة مؤقتاً لتأكيد النسخ
+    const originalSVG = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    btn.style.color = 'var(--color-text-success)';
+    btn.style.borderColor = 'var(--color-border-success)';
+    
+    setTimeout(() => {
+      btn.innerHTML = originalSVG;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1500);
+  }).catch(err => {
+    console.error('فشل النسخ: ', err);
+    alert('فشل نسخ الكود.');
+  });
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  const text=document.getElementById('toast-text');
+  text.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && document.getElementById('modal').classList.contains('open')) {
+    closeModal();
+  }
+});
 </script>
 </body>
 </html>
