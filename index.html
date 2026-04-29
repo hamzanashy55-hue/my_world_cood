@@ -2,148 +2,193 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>Code World | Breathing Vault</title>
+  <title>Code World | Potter Vault</title>
   <style>
     :root {
       --gold-color: #d4af37;
       --bg-dark: #0d1117;
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body, html {
-      margin: 0; padding: 0;
       height: 100%; width: 100%;
       background-color: var(--bg-dark);
       overflow: hidden;
-      perspective: 1000px; /* ضروري جداً لإعطاء بعد ثالث للحركة */
+      perspective: 1000px;
+      cursor: none; /* إخفاء الماوس الأصلي لشياكة الأنيميشن */
     }
 
-    /* --- شاشة الترحيب --- */
-    #splash {
-      position: fixed; inset: 0; background: #000;
+    /* --- 1. شاشة الترحيب السوداء (Splash Screen) --- */
+    #splash-screen {
+      position: fixed; inset: 0;
+      background: #000;
       display: flex; align-items: center; justify-content: center;
-      z-index: 100; transition: 1s;
+      z-index: 9999; transition: opacity 1s, visibility 1s;
     }
 
-    /* --- الخلفية اللي بتتنفس (The Breathing Background) --- */
-    .breathing-bg {
+    .welcome-msg {
+      font-size: 28px; color: var(--gold-color);
+      text-align: center; font-family: monospace;
+      animation: fadeInOut 2.8s ease-in-out forwards;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.1); }
+    }
+
+    /* --- 2. الخلفية اللي بتتنفس (صورة اللاب توب) --- */
+    #bg-image {
       position: fixed;
-      inset: -50px; /* أكبر من الشاشة شوية عشان لما تتحرك متسيبش فراغ */
-      background: radial-gradient(circle at center, #1a1a2e 0%, #0d1117 100%);
+      inset: -50px; /* مساحة للحركة */
+      background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
+      background-size: cover;
+      background-position: center;
       z-index: -1;
-      transition: transform 0.2s ease-out; /* نعومة الحركة مع الماوس */
+      transition: transform 0.2s ease-out;
     }
 
-    /* تأثير النبض التلقائي (Pulse) */
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(1.05); opacity: 1; }
-      100% { transform: scale(1); opacity: 0.8; }
-    }
-    .breathing-bg::after {
-      content: ""; position: absolute; inset: 0;
-      background: radial-gradient(circle at 30% 30%, rgba(212, 175, 55, 0.05), transparent);
-      animation: pulse 8s infinite ease-in-out;
+    /* --- 3. أنيميشن الماوس (Glow & Trail) --- */
+    .cursor-glow {
+      position: fixed; width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
     }
 
-    /* --- كارت الدخول المتفاعل --- */
+    .trail-dot {
+      position: fixed; width: 8px; height: 8px;
+      background: var(--gold-color); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      filter: drop-shadow(0 0 5px var(--gold-color));
+    }
+
+    /* --- 4. كارت الدخول المتفاعل --- */
     #login-container {
       height: 100vh; display: flex; align-items: center; justify-content: center;
     }
 
-    .glass-card {
-      background: rgba(22, 27, 34, 0.8);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 40px; border-radius: 25px;
-      text-align: center; width: 350px;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-      /* هذا السطر هو سر التنفس مع الماوس */
-      transform-style: preserve-3d;
+    #login-card {
+      background: rgba(13, 17, 23, 0.9);
+      backdrop-filter: blur(12px);
+      padding: 40px; border-radius: 20px;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      text-align: center; width: 360px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
       transition: transform 0.1s ease-out;
     }
 
-    .gold-text {
-      color: var(--gold-color);
-      font-family: 'Courier New', monospace;
-      text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
-    }
-
-    input {
+    #pw-input {
       width: 100%; padding: 12px; margin: 20px 0;
       background: #010409; border: 1px solid #30363d;
       border-radius: 8px; color: white; text-align: center;
+      font-family: monospace; letter-spacing: 2px;
     }
 
-    /* أنيميشن الماوس (التوهج) */
-    .glow {
-      position: fixed; width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
-      border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%);
-      z-index: 99;
+    button {
+      background: var(--gold-color); color: black; border: none;
+      padding: 10px 25px; border-radius: 8px; cursor: pointer;
+      font-weight: bold; width: 100%;
     }
+
+    #dashboard { display: none; padding: 50px; color: white; text-align: center; }
   </style>
 </head>
 <body>
 
-<div id="splash">
-  <h1 class="gold-text" style="animation: pulse 2s infinite">hello_Eng/potter...</h1>
-</div>
-
-<div class="breathing-bg" id="bg"></div>
-<div class="glow" id="glow"></div>
-
-<div id="login-container">
-  <div class="glass-card" id="card">
-    <h2 style="color: white;">Code World</h2>
-    <p class="gold-text">Welcome Back Potter</p>
-    <input type="password" id="pass" placeholder="Password">
-    <button onclick="check()" style="background:var(--gold-color); border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold;">Unlock</button>
+  <div id="splash-screen">
+    <div class="welcome-msg">hello_Eng/potter<br>welcome to again</div>
   </div>
-</div>
 
-<script>
-  const bg = document.getElementById('bg');
-  const card = document.getElementById('card');
-  const glow = document.getElementById('glow');
+  <div id="bg-image"></div>
+  <div id="glow" class="cursor-glow"></div>
 
-  // --- كود التنفس والحركة مع الماوس ---
-  window.addEventListener('mousemove', (e) => {
-    const x = (e.clientX / window.innerWidth - 0.5) * 40; // نسبة الحركة أفقياً
-    const y = (e.clientY / window.innerHeight - 0.5) * 40; // نسبة الحركة رأسياً
+  <div id="login-container">
+    <div id="login-card">
+      <h2 style="color: white; margin-bottom: 10px;">Code World</h2>
+      <p style="color: var(--gold-color); font-size: 14px;">Hello_Eng/potter</p>
+      <input id="pw-input" type="password" placeholder="Password">
+      <button onclick="doLogin()">Unlock Vault</button>
+    </div>
+  </div>
 
-    // تحريك الخلفية (عكس الماوس عشان تدي عمق)
-    bg.style.transform = `translate(${-x}px, ${-y}px)`;
+  <div id="dashboard">
+    <h1 style="color: var(--gold-color);">Welcome Back Master Potter!</h1>
+    <p style="margin-top:20px;">الخلفية الآن تتنفس معك وكل الخواص مفعلة.</p>
+    <button onclick="location.reload()" style="width:auto; margin-top:30px; background:#da3637; color:white;">Logout</button>
+  </div>
 
-    // إمالة الكارت (Tilt Effect)
-    card.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+  <script>
+    // 1. كود الدخول بـ Enter
+    document.getElementById('pw-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') doLogin();
+    });
 
-    // تحريك التوهج الذهبي مع الماوس
-    glow.style.left = e.clientX + 'px';
-    glow.style.top = e.clientY + 'px';
-  });
-
-  // كود الباسورد والـ Enter
-  document.getElementById('pass').addEventListener('keypress', (e) => {
-    if(e.key === 'Enter') check();
-  });
-
-  function check() {
-    if(document.getElementById('pass').value === 'nashy') {
-      alert('Welcome, Master Potter!');
-      // هنا تقدر تفتح الـ Dashboard بتاعتك
-    } else {
-      alert('Wrong Password!');
+    function doLogin() {
+      if(document.getElementById('pw-input').value === 'nashy') {
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        document.getElementById('bg-image').style.filter = 'blur(10px) brightness(0.3)';
+      } else {
+        alert('كلمة المرور خاطئة!');
+      }
     }
-  }
 
-  // إخفاء شاشة الترحيب
-  window.onload = () => {
-    setTimeout(() => {
-      document.getElementById('splash').style.opacity = '0';
-      setTimeout(() => document.getElementById('splash').remove(), 1000);
-    }, 2500);
-  };
-</script>
+    // 2. كود التنفس والحركة مع الماوس
+    const bg = document.getElementById('bg-image');
+    const card = document.getElementById('login-card');
+    const glow = document.getElementById('glow');
 
+    window.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 30;
+      const y = (e.clientY / window.innerHeight - 0.5) * 30;
+
+      // الخلفية تتنفس مع الماوس
+      bg.style.transform = `scale(1.1) translate(${x}px, ${y}px)`;
+      
+      // الكارت يميل
+      card.style.transform = `rotateY(${x/2}deg) rotateX(${-y/2}deg)`;
+
+      // التوهج يتبع الماوس
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+
+    // 3. أنيميشن ذيل الماوس (Trail)
+    const dots = [];
+    for(let i=0; i<10; i++) {
+      const d = document.createElement('div');
+      d.className = 'trail-dot';
+      document.body.appendChild(d);
+      dots.push(d);
+    }
+
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+
+    function animateDots() {
+      let x = mx, y = my;
+      dots.forEach((d, i) => {
+        d.style.left = x + 'px'; d.style.top = y + 'px';
+        d.style.opacity = 1 - (i / dots.length);
+        let next = dots[i+1] || dots[0];
+        x += (next.offsetLeft - x) * 0.3;
+        y += (next.offsetTop - y) * 0.3;
+      });
+      requestAnimationFrame(animateDots);
+    }
+    animateDots();
+
+    // 4. إخفاء شاشة الترحيب السوداء
+    window.onload = () => {
+      setTimeout(() => {
+        const s = document.getElementById('splash-screen');
+        s.style.opacity = '0';
+        setTimeout(() => s.style.visibility = 'hidden', 1000);
+      }, 3000);
+    };
+  </script>
 </body>
 </html>
