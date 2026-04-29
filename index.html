@@ -6,55 +6,90 @@
   <title>Code World Vault</title>
   <style>
     :root {
-      --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      --font-mono: 'Cascadia Code', 'Fira Code', monospace;
-      --bg-dashboard: #0d1117; /* لون الخلفية الداخلي */
-      --card-bg: #161b22;      /* لون كارت المشروع */
       --gold-color: #d4af37;
+      --bg-dark: #0d1117;
+      --card-bg: #161b22;
+      --font-mono: 'Cascadia Code', monospace;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    
     body {
-      font-family: var(--font-sans);
-      background-color: #0d1117;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-dark);
       color: #c9d1d9;
       overflow-x: hidden;
+      cursor: crosshair; /* ماوس احترافي */
     }
 
-    /* --- شاشة الدخول (التي بها الصورة) --- */
+    /* --- 1. شاشة الترحيب (Splash Screen) --- */
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 1s, visibility 1s;
+    }
+
+    .welcome-msg {
+      font-size: 26px;
+      color: var(--gold-color);
+      text-align: center;
+      letter-spacing: 2px;
+      font-family: var(--font-mono);
+      animation: fadeInOut 2.8s ease-in-out forwards;
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.1); }
+    }
+
+    /* --- 2. أنيميشن الماوس (Mouse Trail) --- */
+    .trail {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: var(--gold-color);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      opacity: 0.6;
+      filter: blur(2px);
+    }
+
+    /* --- 3. شاشة الدخول --- */
     #login-screen {
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070&auto=format&fit=crop');
+      background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
       background-size: cover;
       background-position: center;
-      position: fixed;
-      width: 100%;
-      z-index: 1000;
     }
 
     #login-card {
-      background: rgba(13, 17, 23, 0.9);
+      background: rgba(13, 17, 23, 0.95);
       backdrop-filter: blur(10px);
-      border: 1px solid #30363d;
-      border-radius: 12px;
       padding: 40px;
-      width: 350px;
+      border-radius: 15px;
+      border: 1px solid #30363d;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     }
 
-    #login-card h2 { font-size: 24px; margin-bottom: 5px; }
-    
-    .subtitle {
-      font-size: 15px;
-      font-weight: 300;
+    #login-card h2 { margin-bottom: 10px; }
+
+    .subtitle-gold {
       color: var(--gold-color);
+      font-size: 14px;
       margin-bottom: 25px;
-      background: linear-gradient(90deg, #d4af37 0%, #ffffff 50%, #d4af37 100%);
+      background: linear-gradient(90deg, #d4af37, #fff, #d4af37);
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -63,87 +98,53 @@
     @keyframes shine { to { background-position: -200% center; } }
 
     #pw-input {
-      width: 100%;
-      padding: 10px;
-      background: #010409;
-      border: 1px solid #30363d;
-      color: white;
-      text-align: center;
-      margin-bottom: 15px;
-      border-radius: 6px;
+      width: 100%; padding: 12px; background: #010409;
+      border: 1px solid #30363d; color: white;
+      text-align: center; margin-bottom: 15px; border-radius: 8px;
     }
 
-    /* --- لوحة التحكم (الخلفية الداكنة السادة) --- */
-    #dashboard {
-      display: none; /* تظهر فقط بعد تسجيل الدخول */
-      background: var(--bg-dashboard);
-      min-height: 100vh;
-      padding: 20px 5%;
-    }
+    /* --- 4. لوحة التحكم (الداخلية) --- */
+    #dashboard { display: none; padding: 20px 5%; }
 
     .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 0;
-      border-bottom: 1px solid #30363d;
-      margin-bottom: 30px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 0; border-bottom: 1px solid #30363d; margin-bottom: 30px;
     }
 
-    /* كروت المشاريع - غير شفافة وواضحة جداً */
     .project-card {
-      background: var(--card-bg);
-      border: 1px solid #30363d;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      background: var(--card-bg); border: 1px solid #30363d;
+      border-radius: 10px; margin-bottom: 20px; overflow: hidden;
     }
 
-    .card-head { padding: 15px; background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; }
-    .card-name { font-weight: 600; color: #f0f6fc; }
-
-    .card-code {
-      background: #010409 !important; /* لون أسود عميق للكود */
-      padding: 15px;
-      border-top: 1px solid #30363d;
-      border-bottom: 1px solid #30363d;
-    }
-    .card-code pre { color: #79c0ff; font-family: var(--font-mono); font-size: 13px; overflow-x: auto; }
-
-    .card-foot { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; }
+    .card-code { background: #010409; padding: 15px; border-top: 1px solid #30363d; }
+    .card-code pre { color: #79c0ff; font-family: var(--font-mono); font-size: 13px; }
 
     button {
-      background: #238636;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
+      background: #238636; color: white; border: none;
+      padding: 10px 20px; border-radius: 6px; cursor: pointer;
     }
     button:hover { background: #2ea043; }
 
-    .search-wrap input {
-      width: 100%;
-      padding: 12px;
-      background: #010409;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      color: white;
-      margin-bottom: 25px;
+    .search-input {
+      width: 100%; padding: 12px; background: #161b22;
+      border: 1px solid #30363d; color: white; border-radius: 8px; margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
 
+  <div id="splash-screen">
+    <div class="welcome-msg">
+      hello_Eng/potter<br>welcome to again
+    </div>
+  </div>
+
   <div id="login-screen">
     <div id="login-card">
       <h2>Code World</h2>
-      <p class="subtitle">Hello_Eng/potter</p>
+      <p class="subtitle-gold">Hello_Eng/potter</p>
       <input id="pw-input" type="password" placeholder="Password">
       <button onclick="doLogin()" style="width: 100%">Unlock Vault</button>
-      <p id="error" style="color: #f85149; font-size: 12px; margin-top: 10px; display: none;">Wrong password!</p>
     </div>
   </div>
 
@@ -151,44 +152,69 @@
     <div class="topbar">
       <h2>Code World Vault</h2>
       <div>
-        <button onclick="alert('Open Modal to add project')">+ New Project</button>
-        <button onclick="location.reload()" style="background: #da3637; margin-right: 10px;">Logout</button>
+        <button onclick="location.reload()" style="background: #da3637;">Logout</button>
       </div>
     </div>
-
-    <div class="search-wrap">
-      <input type="text" placeholder="Search projects...">
-    </div>
-
+    
+    <input type="text" class="search-input" placeholder="البحث في مشاريعك...">
+    
     <div id="projects-grid">
       <div class="project-card">
-        <div class="card-head">
-          <span class="card-name">My First Script</span>
-          <span style="color: #58a6ff; font-size: 12px;">Python</span>
-        </div>
-        <div class="card-code">
-          <pre><code>print("Hello Eng Potter!")
-# Now the code is 100% readable</code></pre>
-        </div>
-        <div class="card-foot">
-          <span style="font-size: 11px; color: #8b949e;">2026-04-30</span>
-          <button style="background: #30363d">Copy</button>
-        </div>
+        <div style="padding:15px"><b>Example Project</b></div>
+        <div class="card-code"><pre><code>print("Welcome back, Potter!")</code></pre></div>
       </div>
     </div>
   </div>
 
   <script>
+    // 1. Enter من الكيبورد
+    document.getElementById('pw-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') doLogin();
+    });
+
+    // 2. كود الدخول
     function doLogin() {
-      const pass = document.getElementById('pw-input').value;
-      if(pass === 'nashy') {
+      if(document.getElementById('pw-input').value === 'nashy') {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
-        document.body.style.backgroundImage = 'none'; // حذف خلفية اللاب توب عند الدخول
+        document.body.style.backgroundImage = 'none';
       } else {
-        document.getElementById('error').style.display = 'block';
+        alert('Password Incorrect');
       }
     }
+
+    // 3. إخفاء الترحيب
+    window.onload = () => {
+      setTimeout(() => {
+        const s = document.getElementById('splash-screen');
+        s.style.opacity = '0';
+        setTimeout(() => s.style.visibility = 'hidden', 1000);
+      }, 3000);
+    };
+
+    // 4. أنيميشن الماوس
+    const dots = [];
+    for(let i=0; i<12; i++) {
+      const d = document.createElement('div');
+      d.className = 'trail';
+      document.body.appendChild(d);
+      dots.push(d);
+    }
+
+    let mx = 0, my = 0;
+    window.addEventListener('mousemove', (e) => { mx = e.clientX; my = e.clientY; });
+
+    function render() {
+      let x = mx, y = my;
+      dots.forEach((d, i) => {
+        d.style.left = x + 'px'; d.style.top = y + 'px';
+        let next = dots[i+1] || dots[0];
+        x += (next.offsetLeft - x) * 0.35;
+        y += (next.offsetTop - y) * 0.35;
+      });
+      requestAnimationFrame(render);
+    }
+    render();
   </script>
 </body>
 </html>
