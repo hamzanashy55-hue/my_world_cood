@@ -6,6 +6,27 @@
     <title>Code World | Potter Master Vault</title>
     
     <style>
+        /* --- تعديل واجهة الدخول يدوياً --- */
+#login-container { 
+    height: 100vh !important; /* الـ important عشان نضمن إنه يطبق فوق أي كود تاني */
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important; 
+    /* هنا بنحط صورة اللاب توب وعليها طبقة سواد بنسبة 70% عشان الكلام ينور */
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070') center/cover !important;
+}
+
+/* تعديل الكارت عشان يكون زي الصورة بالظبط */
+.login-card { 
+    background: rgba(13, 17, 23, 0.8) !important; 
+    backdrop-filter: blur(15px) !important; 
+    border: 1px solid #d4af37 !important; 
+    border-radius: 20px !important;
+    padding: 40px !important;
+    width: 380px !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+}
         /* --- 1. الـ Variables والأساسيات --- */
         :root {
             --gold-color: #d4af37;
@@ -37,28 +58,23 @@
         }
 
         /* --- 2. الماوس الذهبي المصغر (نظام النبض) --- */
-        .cursor-glow {
-            position: fixed;
-            width: 180px;
-            height: 180px;
-            background: radial-gradient(
-                circle, 
-                var(--gold-color) 0%, 
-                var(--gold-color) 1.5%, 
-                rgba(212, 175, 55, 0.1) 10%, 
-                transparent 70%
-            );
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10005;
-            transform: translate(-50%, -50%);
-            will-change: left, top;
-            animation: glowPulse 4s infinite ease-in-out;
-        }
-        @keyframes glowPulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-        }
+   .cursor-glow { 
+    position: fixed;
+    width: 150px; 
+    height: 150px; 
+    background: radial-gradient(circle, #d4af37 0%, #d4af37 2%, rgba(212, 175, 55, 0.1) 10%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10005;
+    transform: translate(-50%, -50%);
+    will-change: left, top;
+    animation: glowPulse 4s infinite ease-in-out;
+} /* القفلة دي مهمة جداً تكون هنا */
+
+@keyframes glowPulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+}
 
         /* --- 3. شاشة الترحيب (الرسالة الأصلية) --- */
         #splash-screen {
@@ -82,20 +98,20 @@
         /* --- 4. شاشة الدخول والخلفية --- */
         #bg-image {
             position: fixed; inset: -60px;
-            background: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070') center/cover;
+
             z-index: -1; will-change: transform; transition: transform 0.3s ease-out;
         }
         #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .login-card {
-            background: rgba(13, 17, 23, 0.95);
-            padding: 50px;
-            border-radius: 25px;
-            border: 1px solid var(--gold-color);
-            text-align: center;
-            backdrop-filter: blur(15px);
-            width: 400px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.7);
-        }
+       .login-card { 
+    background: rgba(13, 17, 23, 0.85); /* الـ 0.85 هي درجة الشفافية */
+    backdrop-filter: blur(20px); /* درجة التغبيش (Blur) للخلفية */
+    padding: 50px; 
+    border-radius: 30px; 
+    border: 1.5px solid #d4af37; /* لون حدود الكارت الذهبية */
+    text-align: center; 
+    width: 420px; 
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8); /* الظل اللي بيخلي الكارت بارز */
+}
 
         /* --- 5. لوحة التحكم (الخزنة الدائمة) --- */
         #dashboard {
@@ -215,8 +231,22 @@
 
         /* الأزرار */
         button { cursor: pointer; border-radius: 10px; border: none; padding: 12px 25px; font-weight: bold; transition: 0.3s; font-size: 14px; }
-        .btn-gold { background: var(--gold-color); color: #000; }
-        .btn-gold:hover { background: #fff; transform: translateY(-2px); }
+      .btn-gold { 
+    background: #d4af37; /* لون الزرار الذهبي */
+    color: #000; /* لون الكتابة جوه الزرار */
+    padding: 15px 30px; 
+    border-radius: 12px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    width: 100%; 
+    transition: 0.3s; 
+    border: none;
+}
+
+.btn-gold:hover { 
+    background: #ffffff; /* لما الماوس يجي عليه يقلب أبيض */
+    transform: translateY(-3px); /* حركة خفيفة للفوق */
+}
         .btn-open { background: var(--success-green); color: #fff; width: 100%; margin-top: 15px; }
         .btn-delete { background: transparent; color: var(--error-red); font-size: 11px; margin-top: 15px; border: 1px solid transparent; }
         .btn-delete:hover { border-color: var(--error-red); }
@@ -344,7 +374,7 @@
          */
         function validateIdentity() {
             if (document.getElementById('pw-input').value === 'nashy') {
-                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('login-container').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
                 document.body.style.cursor = 'auto';
                 cursor.style.display = 'none';
