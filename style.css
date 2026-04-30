@@ -1,110 +1,77 @@
-/* style.css */
-:root {
-    --gold-color: #d4af37;
-    --bg-dark: #080a0f;
-    --text-main: #c9d1d9;
-}
-
-* { 
-    box-sizing: border-box; 
-    margin: 0; 
-    padding: 0; 
-}
-
-body, html {
-    height: 100%; 
-    width: 100%;
-    background-color: var(--bg-dark);
-    /* منع التمرير عشان الماوس والأنيميشن */
-    overflow: hidden; 
-    /* إخفاء الماوس على اللاب توب فقط */
-    cursor: none;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
-}
-
-/* --- 1. تعديل الموبايل (Responsive) --- */
-@media (max-width: 768px) {
-    body { cursor: auto; /* إظهار الماوس الطبيعي في الموبايل لأن اللمس ملوش ماوس ذهبي */ }
-    #dot, #halo { display: none; /* إخفاء الماوس الذهبي في الفون عشان ميزحمش الشاشة */ }
-    .welcome-msg { font-size: 2rem !important; /* تصغير رسالة الترحيب في الفون */ }
-    .login-card { width: 90% !important; padding: 30px !important; /* تكبير الكارت لملء شاشة الفون */ }
-}
-
-/* --- 2. شاشة الترحيب --- */
+/* --- 1. أنيميشن البوابة السينيمائية --- */
 #splash-screen {
     position: fixed;
     inset: 0;
-    background: #000;
+    z-index: 10000;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 10000;
-    transition: all 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+    overflow: hidden;
 }
 
-.welcome-msg {
-    font-family: 'Cascadia Code', monospace;
-    font-size: 3.5rem;
-    color: var(--gold-color);
-    text-shadow: 0 0 25px var(--gold-color);
-    margin-bottom: 25px;
+.door {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    background: #000;
+    transition: transform 1.5s cubic-bezier(0.7, 0, 0.3, 1);
+}
+
+.left-door { left: 0; border-right: 1px solid var(--gold-color); }
+.right-door { right: 0; border-left: 1px solid var(--gold-color); }
+
+/* الخط الذهبي في المنتصف */
+.gold-line {
+    position: absolute;
+    width: 2px;
+    height: 100vh;
+    background: var(--gold-color);
+    box-shadow: 0 0 20px var(--gold-color);
+    z-index: 10001;
+    transition: opacity 0.5s ease;
+}
+
+/* حالة الفتح (يتم تفعيلها بالجافا سكريبت) */
+#splash-screen.open .left-door { transform: translateX(-100%); }
+#splash-screen.open .right-door { transform: translateX(100%); }
+#splash-screen.open .gold-line { opacity: 0; }
+
+/* رسالة الترحيب والنبض الذهبي */
+.welcome-content {
+    z-index: 9999;
     text-align: center;
 }
 
-/* --- 3. الخلفية (صورة برمجية هادئة وجديدة) --- */
+.pulse-gold {
+    font-family: 'Cascadia Code', monospace;
+    font-size: 3.5rem;
+    color: var(--gold-color);
+    animation: goldPulse 2s infinite ease-in-out;
+}
+
+@keyframes goldPulse {
+    0%, 100% { text-shadow: 0 0 10px var(--gold-color); opacity: 0.8; }
+    50% { text-shadow: 0 0 40px var(--gold-color), 0 0 60px var(--gold-color); opacity: 1; }
+}
+
+/* --- 2. الخلفية (مبرمج هادئ) --- */
 #bg-container {
     position: fixed;
-    inset: -5%; /* تقليل الإزاحة عشان تناسب الموبايل */
+    inset: -5%;
     z-index: -1;
-    background-color: #080a0f;
-    /* صورة برمجية احترافية وهادية جداً */
     background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
                       url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070');
     background-size: cover;
     background-position: center;
-    background-repeat: no-repeat;
-    filter: blur(10px); /* التغبيش السينيمائي اللي بيختفي */
+    filter: blur(10px); /* يبدأ مغبش ويظهر تدريجياً */
     transition: filter 2s ease;
 }
 
-/* --- 4. كارت الدخول --- */
-#login-screen { 
-    height: 100vh; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
+/* --- 3. توافق الموبايل --- */
+@media (max-width: 768px) {
+    .pulse-gold { font-size: 2rem; }
+    .login-card { width: 90%; }
+    #dot, #halo { display: none; }
+    body { cursor: auto; }
 }
-
-.login-card { 
-    background: rgba(13, 17, 23, 0.75); 
-    backdrop-filter: blur(20px); 
-    padding: 50px; 
-    border-radius: 30px; 
-    border: 1px solid rgba(212, 175, 55, 0.3); 
-    text-align: center; 
-    width: 420px; 
-    box-shadow: 0 40px 100px rgba(0,0,0,0.9);
-    animation: float 5s infinite ease-in-out;
-}
-
-@keyframes float { 
-    0%, 100% { transform: translateY(0); } 
-    50% { transform: translateY(-15px); } 
-}
-
-#pw-input { 
-    width: 100%; padding: 15px; margin: 20px 0; 
-    background: rgba(0,0,0,0.5); border: 1px solid #333; 
-    border-radius: 12px; color: #fff; text-align: center; font-size: 1.2rem; 
-}
-
-.btn-gold { 
-    background: var(--gold-color); color: #000; 
-    padding: 15px; border-radius: 12px; font-weight: bold; 
-    width: 100%; border: none; cursor: pointer; transition: 0.3s;
-}
-
-/* الماوس الذهبي */
-#dot { width: 8px; height: 8px; background: #fff; box-shadow: 0 0 15px var(--gold-color); position: fixed; border-radius: 50%; pointer-events: none; z-index: 10002; transform: translate(-50%, -50%); }
-#halo { width: 35px; height: 35px; border: 1.5px solid var(--gold-color); position: fixed; border-radius: 50%; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
