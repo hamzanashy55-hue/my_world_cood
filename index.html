@@ -1,224 +1,10 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code World | Potter Master Vault</title>
-    
-    <style>
-        :root {
-            --gold-color: #d4af37;
-            --bg-dark: #080a0f;
-            --text-main: #c9d1d9;
-            --font-fancy: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body, html {
-            height: 100%;
-            width: 100%;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: var(--font-fancy);
-            overflow: hidden;
-            cursor: none; /* إخفاء الماوس الأصلي */
-        }
-
-        /* --- 1. شاشة ترحيب فخمة (Splash Screen) --- */
-        #splash-screen {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .welcome-text {
-            font-size: 5rem;
-            font-weight: 900;
-            color: var(--gold-color);
-            text-transform: uppercase;
-            letter-spacing: 8px;
-            text-align: center;
-            line-height: 1.2;
-            /* تأثير 3D احترافي */
-            text-shadow: 
-                0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 
-                0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 
-                0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 
-                0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15),
-                0 0 30px var(--gold-color);
-            animation: emerge 2.5s ease-out forwards;
-        }
-
-        @keyframes emerge {
-            0% { transform: scale(0.5) translateY(50px); opacity: 0; filter: blur(10px); }
-            100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
-        }
-
-        /* --- 2. الماوس الذهبي المتطور --- */
-        #dot {
-            width: 8px;
-            height: 8px;
-            background: #fff;
-            box-shadow: 0 0 15px #fff, 0 0 30px var(--gold-color);
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10002;
-            transform: translate(-50%, -50%);
-        }
-
-        #halo {
-            width: 35px;
-            height: 35px;
-            border: 1.5px solid rgba(212, 175, 55, 0.5);
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10001;
-            transform: translate(-50%, -50%);
-        }
-
-        .trail-particle {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: var(--gold-color);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10000;
-            transform: translate(-50%, -50%);
-            animation: fadeOutParticle 0.8s linear forwards;
-        }
-
-        @keyframes fadeOutParticle {
-            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-        }
-
-        /* --- 3. الخلفية الإجبارية (مود القهوة واللابتوب) --- */
-        #bg-container {
-            position: fixed;
-            inset: -10%; 
-            z-index: -1;
-            will-change: transform;
-            background-color: #080a0f; 
-            /* الرابط المباشر للصورة مع التعتيم */
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                              url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        /* --- 4. شاشة الدخول --- */
-        #login-screen {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            perspective: 1000px;
-        }
-
-        .login-card {
-            background: rgba(13, 17, 23, 0.7);
-            backdrop-filter: blur(20px);
-            padding: 60px 40px;
-            border-radius: 40px;
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            text-align: center;
-            width: 420px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            animation: floating 5s infinite ease-in-out;
-        }
-
-        @keyframes floating {
-            0%, 100% { transform: translateY(0) rotateX(0deg); }
-            50% { transform: translateY(-20px) rotateX(2deg); }
-        }
-
-        .brand-logo {
-            margin-bottom: 40px;
-            animation: sideToSide 4s infinite ease-in-out;
-        }
-
-        .brand-logo h1 {
-            color: #fff;
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: 3px;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
-        }
-
-        .brand-logo p {
-            color: var(--gold-color);
-            font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
-            letter-spacing: 4px;
-        }
-
-        @keyframes sideToSide {
-            0%, 100% { transform: translateX(-15px); }
-            50% { transform: translateX(15px); }
-        }
-
-        #pw-input {
-            width: 100%;
-            padding: 18px;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            color: #fff;
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 1.2rem;
-            letter-spacing: 5px;
-            transition: 0.4s;
-        }
-
-        #pw-input:focus {
-            border-color: var(--gold-color);
-            outline: none;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-        }
-
-        .btn-gold {
-            background: var(--gold-color);
-            color: #000;
-            padding: 18px;
-            border-radius: 15px;
-            font-weight: 800;
-            font-size: 1.1rem;
-            cursor: pointer;
-            width: 100%;
-            border: none;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        .btn-gold:hover {
-            background: #fff;
-            transform: scale(1.02);
-        }
-
-        /* المخزن الداخلي (يظهر بعد الباسورد) */
-        #dashboard {
-            display: none;
-            padding: 100px;
-            text-align: center;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css"> <!-- ربط ملف الاستايل -->
 </head>
 <body>
 
@@ -227,11 +13,11 @@
         <div class="welcome-text">HELLO<br>ENG_POTTER</div>
     </div>
 
-    <!-- الماوس المضيء -->
+    <!-- الماوس السحري -->
     <div id="dot"></div>
     <div id="halo"></div>
 
-    <!-- الخلفية -->
+    <!-- حاوية الخلفية -->
     <div id="bg-container"></div>
 
     <!-- واجهة الدخول -->
@@ -246,79 +32,13 @@
         </div>
     </section>
 
-    <!-- الداشبورد -->
+    <!-- السيستم الداخلي (الخزنة) -->
     <main id="dashboard">
-        <h1 style="color: var(--gold-color); font-size: 4rem; text-shadow: 0 0 20px var(--gold-color);">ACCESS GRANTED</h1>
-        <p style="font-size: 1.5rem; margin-top: 20px;">Welcome back, Eng/Potter. System is ready.</p>
-        <button onclick="location.reload()" style="margin-top: 50px; background: none; border: 1px solid red; color: red; padding: 10px 20px; cursor: pointer; border-radius: 10px;">Security Logout</button>
+        <h1 class="vault-title">ACCESS GRANTED</h1>
+        <p>Welcome back, Master Potter. Your vault is secure.</p>
+        <button class="logout-btn" onclick="location.reload()">Security Logout</button>
     </main>
 
-    <script>
-        const dot = document.getElementById('dot');
-        const halo = document.getElementById('halo');
-        const bg = document.getElementById('bg-container');
-
-        // --- نظام الماوس السريع والـ Trail ---
-        window.addEventListener('mousemove', (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
-
-            // الماوس يتحرك لحظياً
-            dot.style.left = `${x}px`;
-            dot.style.top = `${y}px`;
-            halo.style.left = `${x}px`;
-            halo.style.top = `${y}px`;
-
-            // رسم الجسيمات
-            createParticle(x, y);
-
-            // البارالاكس
-            const moveX = (window.innerWidth / 2 - x) / 45;
-            const moveY = (window.innerHeight / 2 - y) / 45;
-            bg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
-        });
-
-        function createParticle(x, y) {
-            const particle = document.createElement('div');
-            particle.className = 'trail-particle';
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            document.body.appendChild(particle);
-            setTimeout(() => particle.remove(), 800);
-        }
-
-        // --- تلاشي شاشة الترحيب ---
-        window.onload = () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                if (splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => splash.style.display = 'none', 1200);
-                }
-            }, 3500);
-        };
-
-        // --- التحقق من الهوية ---
-        function validateIdentity() {
-            const pass = document.getElementById('pw-input').value;
-            if (pass === 'nashy') {
-                document.getElementById('login-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'block';
-                    document.body.style.cursor = 'default';
-                    dot.style.display = 'none';
-                    halo.style.display = 'none';
-                }, 500);
-            } else {
-                alert("ACCESS DENIED: Identity Unverified.");
-            }
-        }
-
-        // Enter Key Support
-        document.getElementById('pw-input').addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') validateIdentity();
-        });
-    </script>
+    <script src="script.js"></script> <!-- ربط ملف الجافا سكريبت -->
 </body>
 </html>
