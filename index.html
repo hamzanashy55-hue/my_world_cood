@@ -9,15 +9,32 @@
 </head>
 <body>
 
-    <!-- 1. شاشة الترحيب السوداء -->
-    <div id="splash-screen">
-        <div class="welcome-wrapper" style="text-align: center;">
-            <!-- هنا هيظهر تأثير الكتابة البرمجي -->
-            <h1 class="welcome-msg" id="typewriter"></h1>
-            <!-- خط التحميل الذهبي -->
-            <div class="loader-line"></div>
-        </div>
+   <!-- شاشة الترحيب البوابة السينيمائية -->
+<div id="splash-screen">
+    <div class="door left-door"></div>
+    <div class="door right-door"></div>
+    <div class="gold-line"></div> <!-- الخط الذهبي المركزي -->
+    
+    <div class="welcome-content">
+        <h1 class="welcome-msg pulse-gold">HELLO_POTTER</h1>
     </div>
+</div>
+
+<!-- العناصر المعتادة -->
+<div id="dot"></div>
+<div id="halo"></div>
+<div id="bg-container"></div>
+
+<section id="login-screen">
+    <div class="login-card">
+        <div class="brand-logo">
+            <h1>World_Code</h1>
+            <p>Eng/Potter</p>
+        </div>
+        <input id="pw-input" type="password" placeholder="••••••••">
+        <button class="btn-gold" onclick="validateIdentity()">Unlock</button>
+    </div>
+</section>
 
     <!-- 2. عناصر الماوس الذهبي -->
     <div id="dot"></div>
