@@ -106,20 +106,19 @@
     0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
 }
-/* --- 3. خلفية برمجية "تتنفس" (Parallax) --- */
 #bg-container {
     position: fixed;
     inset: -10%; /* حركة البارالاكس */
-    
-    /* ركز في السطرين دول */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
-                      url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    
     z-index: -1;
     will-change: transform;
+    
+    /* تعديل جذري لضمان ظهور الخلفية */
+    background-color: #080a0f; /* لون احتياطي */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                      url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
         /* --- 4. شاشة الدخول --- */
         #login-screen {
@@ -243,7 +242,7 @@
                 <p>Eng/Potter</p>
             </div>
             <input id="pw-input" type="password" placeholder="••••••••">
-            <button class="btn-gold" onclick="validateIdentity()">Unlock Master Vault</button>
+            <button class="btn-gold" onclick="validateIdentity()">Unlock Master </button>
         </div>
     </section>
 
