@@ -94,13 +94,14 @@
 
         /* --- 3. خلفية برمجية "تتنفس" (Parallax) --- */
         #bg-container {
-            position: fixed;
-            inset: -10%; /* زيادة المساحة للحركة */
-            background: linear-gradient(rgba(8, 10, 15, 0.8), rgba(8, 10, 15, 0.8)), 
-                        url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070') center/cover;
-            z-index: -1;
-            will-change: transform;
-        }
+    position: fixed;
+    inset: -10%; /* عشان حركة البارالاكس تكون واسعة ومريحة */
+    /* الصورة دي اخترتها لك بعناية: مكتب مبرمج كود هادي */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072') center/cover;
+    z-index: -1;
+    will-change: transform;
+}
 
         /* --- 4. شاشة الدخول --- */
         #login-screen {
