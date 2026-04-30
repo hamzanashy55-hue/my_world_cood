@@ -66,45 +66,61 @@
         }
 
         /* --- 2. الماوس الذهبي المطور --- */
-        #dot {
-            width: 6px;
-            height: 6px;
-            background: #fff;
-            box-shadow: 0 0 10px #fff, 0 0 20px var(--gold-color);
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10002;
-            transform: translate(-50%, -50%);
-        }
-
-        #halo {
-            width: 45px;
-            height: 45px;
-            border: 1.5px solid var(--gold-color);
-            background: rgba(212, 175, 55, 0.05);
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
-            position: fixed;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 10001;
-            transform: translate(-50%, -50%);
-            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        /* --- 3. خلفية برمجية "تتنفس" (Parallax) --- */
-   #bg-container {
+       #dot {
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    box-shadow: 0 0 15px #fff, 0 0 30px var(--gold-color);
     position: fixed;
-    inset: -10%; /* عشان لما تحرك الماوس الصورة تتحرك معاك بانسيابية (Parallax) */
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10002;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s; /* استجابة سريعة جداً */
+}
+      /* الهالة الضوئية: خفيفة وبتتحرك مع الماوس لحظياً */
+#halo {
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10001;
+    transform: translate(-50%, -50%);
+}
+        .trail-particle {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: var(--gold-color);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    animation: fadeOutParticle 0.8s linear forwards;
+}
+
+@keyframes fadeOutParticle {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+}
+/* --- 3. خلفية برمجية "تتنفس" (Parallax) --- */
+#bg-container {
+    position: fixed;
+    inset: -10%; /* حركة البارالاكس */
     
-    /* خلفية مود القهوة واللابتوب الدافئ */
-    background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
-                url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070') center/cover;
+    /* ركز في السطرين دول */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                      url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     
     z-index: -1;
     will-change: transform;
 }
-
         /* --- 4. شاشة الدخول --- */
         #login-screen {
             height: 100vh;
@@ -239,43 +255,63 @@
     </main>
 
     <script>
-        // --- التحكم في الماوس والحركة ---
+        // تعريف العناصر مرة واحدة فقط في البداية
         const dot = document.getElementById('dot');
         const halo = document.getElementById('halo');
         const bg = document.getElementById('bg-container');
 
+        // --- 1. نظام الماوس والجسيمات ---
         window.addEventListener('mousemove', (e) => {
             const x = e.clientX;
             const y = e.clientY;
-            
-            // تحريك الماوس النقطة والهالة
+
+            // الماوس الأساسي: سرعة لحظية
             dot.style.left = `${x}px`;
             dot.style.top = `${y}px`;
             
-            // حركة الهالة مع تأخير بسيط لسلاسة أكثر
-            setTimeout(() => {
-                halo.style.left = `${x}px`;
-                halo.style.top = `${y}px`;
-            }, 50);
+            halo.style.left = `${x}px`;
+            halo.style.top = `${y}px`;
 
-            // تأثير البارالاكس (الخلفية تتحرك عكس الماوس)
-            const moveX = (window.innerWidth / 2 - x) / 40;
-            const moveY = (window.innerHeight / 2 - y) / 40;
+            // خلق الجسيمات (The Trail)
+            createParticle(x, y);
+
+            // حركة الخلفية (البارالاكس)
+            const moveX = (window.innerWidth / 2 - x) / 45;
+            const moveY = (window.innerHeight / 2 - y) / 45;
             bg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
         });
 
-        // --- تلاشي شاشة الترحيب ---
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'trail-particle';
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            
+            const size = Math.random() * 5 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+
+            document.body.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 800);
+        }
+
+        // --- 2. تلاشي شاشة الترحيب ---
         window.onload = () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                }, 1200);
-            }, 3500); // 3.5 ثانية للترحيب
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                    }, 1200);
+                }
+            }, 3500);
         };
 
-        // --- التحقق من الهوية ---
+        // --- 3. التحقق من الهوية ---
         function validateIdentity() {
             const pass = document.getElementById('pw-input').value;
             if (pass === 'nashy') {
@@ -283,7 +319,8 @@
                 setTimeout(() => {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'block';
-                    // إعادة الماوس للشكل الطبيعي داخل لوحة التحكم
+                    
+                    // إخفاء الماوس السحري لإظهار الماوس الطبيعي داخل الداشبورد
                     document.body.style.cursor = 'default';
                     dot.style.display = 'none';
                     halo.style.display = 'none';
