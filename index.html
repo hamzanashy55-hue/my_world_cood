@@ -6,44 +6,17 @@
     <title>Code World | Potter Master Vault</title>
     
     <style>
-        /* --- تعديل واجهة الدخول يدوياً --- */
-#login-container { 
-    height: 100vh !important; /* الـ important عشان نضمن إنه يطبق فوق أي كود تاني */
-    display: flex !important; 
-    align-items: center !important; 
-    justify-content: center !important; 
-    /* هنا بنحط صورة اللاب توب وعليها طبقة سواد بنسبة 70% عشان الكلام ينور */
-    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070') center/cover !important;
-}
-
-/* تعديل الكارت عشان يكون زي الصورة بالظبط */
-.login-card { 
-    background: rgba(13, 17, 23, 0.8) !important; 
-    backdrop-filter: blur(15px) !important; 
-    border: 1px solid #d4af37 !important; 
-    border-radius: 20px !important;
-    padding: 40px !important;
-    width: 380px !important;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
-}
-        /* --- 1. الـ Variables والأساسيات --- */
         :root {
             --gold-color: #d4af37;
-            --bg-dark: #0d1117;
-            --card-bg: #161b22;
+            --bg-dark: #080a0f;
             --text-main: #c9d1d9;
-            --error-red: #f85149;
-            --success-green: #3fb950;
-            --border-gray: #30363d;
-            --editor-blue: #79c0ff;
+            --font-fancy: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            outline: none;
         }
 
         body, html {
@@ -51,492 +24,276 @@
             width: 100%;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: var(--font-fancy);
             overflow: hidden;
-            perspective: 1000px;
             cursor: none; /* إخفاء الماوس الأصلي */
         }
 
-        /* --- 2. الماوس الذهبي المصغر (نظام النبض) --- */
-   .cursor-glow { 
-    position: fixed;
-    width: 150px; 
-    height: 150px; 
-    background: radial-gradient(circle, #d4af37 0%, #d4af37 2%, rgba(212, 175, 55, 0.1) 10%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10005;
-    transform: translate(-50%, -50%);
-    will-change: left, top;
-    animation: glowPulse 4s infinite ease-in-out;
-} /* القفلة دي مهمة جداً تكون هنا */
-
-@keyframes glowPulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-}
-
-        /* --- 3. شاشة الترحيب (الرسالة الأصلية) --- */
+        /* --- 1. شاشة ترحيب فخمة (Splash Screen) --- */
         #splash-screen {
-            position: fixed; inset: 0; background: #000;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10001; transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .welcome-msg {
-            font-size: 28px;
-            color: var(--gold-color);
-            text-align: center;
-            font-family: 'Courier New', monospace;
-            animation: fadeInOut 2.8s ease-in-out forwards;
-        }
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1.1); }
-        }
-
-        /* --- 4. شاشة الدخول والخلفية --- */
-        #bg-image {
-            position: fixed; inset: -60px;
-
-            z-index: -1; will-change: transform; transition: transform 0.3s ease-out;
-        }
-        #login-screen { height: 100vh; display: flex; align-items: center; justify-content: center; }
-       .login-card { 
-    background: rgba(13, 17, 23, 0.85); /* الـ 0.85 هي درجة الشفافية */
-    backdrop-filter: blur(20px); /* درجة التغبيش (Blur) للخلفية */
-    padding: 50px; 
-    border-radius: 30px; 
-    border: 1.5px solid #d4af37; /* لون حدود الكارت الذهبية */
-    text-align: center; 
-    width: 420px; 
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8); /* الظل اللي بيخلي الكارت بارز */
-}
-
-        /* --- 5. لوحة التحكم (الخزنة الدائمة) --- */
-        #dashboard {
-            display: none;
-            padding: 50px 7%;
-            height: 100vh;
-            overflow-y: auto;
-            background: rgba(13, 17, 23, 0.9);
-        }
-        .db-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-gray);
-            padding-bottom: 30px;
-            margin-bottom: 40px;
-        }
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-        }
-        .project-card {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            border: 1px solid var(--border-gray);
-            text-align: center;
-            transition: transform 0.3s, border-color 0.3s;
-        }
-        .project-card:hover { transform: translateY(-10px); border-color: var(--gold-color); }
-
-        /* --- 6. بيئة التطوير IDE (كود يسار | عرض يمين) --- */
-        #ide-screen {
-            display: none;
-            height: 100vh;
-            flex-direction: column;
-            background: #010409;
-        }
-        .ide-header {
-            background: #161b22;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-gray);
-        }
-        .ide-body {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            flex-direction: row-reverse; /* الكود يسار والعرض يمين */
-        }
-        
-        /* القسم الأيسر: محرر الكود والمساعد */
-        #editor-part {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            border-right: 2px solid var(--border-gray);
-            padding: 25px;
-            background: #0d1117;
-            position: relative;
-        }
-        #code-editor {
-            flex: 1;
-            background: #010409;
-            color: var(--editor-blue);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid #333;
-            font-family: 'Cascadia Code', monospace;
-            font-size: 15px;
-            line-height: 1.6;
-            resize: none;
-            direction: ltr;
-        }
-
-        /* المساعد الذكي AI (فوق يسار) */
-        #ai-assistant-box {
-            position: absolute;
-            top: 40px;
-            left: 40px;
-            background: rgba(212, 175, 55, 0.05);
-            border: 1px solid var(--gold-color);
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 13px;
-            z-index: 100;
-            color: var(--gold-color);
-            backdrop-filter: blur(5px);
-            pointer-events: none;
-        }
-
-        /* القسم الأيمن: العرض الحي */
-        #preview-part {
-            flex: 1;
+            position: fixed;
+            inset: 0;
             background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .welcome-text {
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--gold-color);
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            text-align: center;
+            line-height: 1.2;
+            /* تأثير 3D احترافي */
+            text-shadow: 
+                0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 
+                0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 
+                0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 
+                0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15),
+                0 0 30px var(--gold-color);
+            animation: emerge 2.5s ease-out forwards;
+        }
+
+        @keyframes emerge {
+            0% { transform: scale(0.5) translateY(50px); opacity: 0; filter: blur(10px); }
+            100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+        }
+
+        /* --- 2. الماوس الذهبي المطور --- */
+        #dot {
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            box-shadow: 0 0 10px #fff, 0 0 20px var(--gold-color);
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10002;
+            transform: translate(-50%, -50%);
+        }
+
+        #halo {
+            width: 45px;
+            height: 45px;
+            border: 1.5px solid var(--gold-color);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+            transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* --- 3. خلفية برمجية "تتنفس" (Parallax) --- */
+        #bg-container {
+            position: fixed;
+            inset: -10%; /* زيادة المساحة للحركة */
+            background: linear-gradient(rgba(8, 10, 15, 0.8), rgba(8, 10, 15, 0.8)), 
+                        url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070') center/cover;
+            z-index: -1;
+            will-change: transform;
+        }
+
+        /* --- 4. شاشة الدخول --- */
+        #login-screen {
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
+            perspective: 1000px;
         }
-        .phone-frame {
-            width: 320px; height: 580px;
-            background: #222; border: 14px solid #333;
-            border-radius: 40px; overflow: hidden;
-            box-shadow: 0 0 60px rgba(0,0,0,0.8);
-            transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .login-card {
+            background: rgba(13, 17, 23, 0.6);
+            backdrop-filter: blur(20px);
+            padding: 60px 40px;
+            border-radius: 40px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            text-align: center;
+            width: 420px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            animation: floating 5s infinite ease-in-out;
         }
-        .laptop-frame { width: 100% !important; height: 100% !important; border-radius: 0; border: none; }
-        iframe { width: 100%; height: 100%; background: #fff; border: none; pointer-events: auto; }
 
-        /* نافذة الاختيار (Choice Modal) */
-        #choice-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 10010; }
-        .choice-box { background: var(--card-bg); padding: 40px; border-radius: 20px; border: 2px solid var(--gold-color); text-align: center; width: 420px; }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-20px) rotateX(2deg); }
+        }
 
-        /* الأزرار */
-        button { cursor: pointer; border-radius: 10px; border: none; padding: 12px 25px; font-weight: bold; transition: 0.3s; font-size: 14px; }
-      .btn-gold { 
-    background: #d4af37; /* لون الزرار الذهبي */
-    color: #000; /* لون الكتابة جوه الزرار */
-    padding: 15px 30px; 
-    border-radius: 12px; 
-    font-weight: bold; 
-    cursor: pointer; 
-    width: 100%; 
-    transition: 0.3s; 
-    border: none;
-}
+        .brand-logo {
+            margin-bottom: 40px;
+            animation: sideToSide 4s infinite ease-in-out;
+        }
 
-.btn-gold:hover { 
-    background: #ffffff; /* لما الماوس يجي عليه يقلب أبيض */
-    transform: translateY(-3px); /* حركة خفيفة للفوق */
-}
-        .btn-open { background: var(--success-green); color: #fff; width: 100%; margin-top: 15px; }
-        .btn-delete { background: transparent; color: var(--error-red); font-size: 11px; margin-top: 15px; border: 1px solid transparent; }
-        .btn-delete:hover { border-color: var(--error-red); }
+        .brand-logo h1 {
+            color: #fff;
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .brand-logo p {
+            color: var(--gold-color);
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            font-weight: bold;
+        }
+
+        @keyframes sideToSide {
+            0%, 100% { transform: translateX(-15px); }
+            50% { transform: translateX(15px); }
+        }
+
+        /* مدخل الباسورد */
+        #pw-input {
+            width: 100%;
+            padding: 18px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            color: #fff;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.2rem;
+            letter-spacing: 5px;
+            transition: 0.4s;
+        }
+
+        #pw-input:focus {
+            border-color: var(--gold-color);
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+            outline: none;
+        }
+
+        .btn-gold {
+            background: var(--gold-color);
+            color: #000;
+            padding: 18px;
+            border-radius: 15px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            border: none;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+        }
+
+        .btn-gold:hover {
+            transform: scale(1.03) translateY(-3px);
+            background: #fff;
+            box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+        }
+
+        /* إخفاء الأقسام الداخلية في البداية */
+        #dashboard, #ide-screen { display: none; }
+
     </style>
 </head>
 <body>
 
+    <!-- 1. شاشة الترحيب -->
     <div id="splash-screen">
-        <div class="welcome-msg">hello_Eng/potter<br>welcome to again</div>
+        <div class="welcome-text">HELLO,<br>ENG POTTER</div>
     </div>
 
-    <div class="cursor-glow" id="mouse-cursor"></div>
+    <!-- 2. الماوس المضيء -->
+    <div id="dot"></div>
+    <div id="halo"></div>
 
-    <div id="bg-image"></div>
+    <!-- 3. الخلفية المتحركة -->
+    <div id="bg-container"></div>
 
+    <!-- 4. واجهة الدخول -->
     <section id="login-screen">
         <div class="login-card">
-            <h2 style="color:#fff;">Potter Vault Access</h2>
-            <p style="color:var(--gold-color); font-size:14px; margin-top:10px;">Master Identity: Eng/Potter</p>
-            <input id="pw-input" type="password" placeholder="Enter Vault Password">
-            <button class="btn-gold" onclick="validateIdentity()" style="width: 100%">Unlock Potter Vault</button>
+            <div class="brand-logo">
+                <h1>World_Code</h1>
+                <p>Eng / Potter</p>
+            </div>
+            <input id="pw-input" type="password" placeholder="••••••••">
+            <button class="btn-gold" onclick="validateIdentity()">Unlock Master Vault</button>
         </div>
     </section>
 
-    <main id="dashboard">
-        <div class="db-header">
-            <div>
-                <h1 style="color:var(--gold-color);">System Repository</h1>
-                <p style="color:#555; font-size:12px;">Manage your persistent code systems</p>
-            </div>
-            <div style="display:flex; gap:15px;">
-                <button onclick="createNewProject()" class="btn-gold">+ Add New System</button>
-                <button onclick="location.reload()" style="background:#da3637; color:#fff;">Logout</button>
-            </div>
-        </div>
-        <div id="projects-grid" class="grid-layout">
-            </div>
+    <!-- 5. المحتوى الداخلي (المخزن) -->
+    <main id="dashboard" style="padding: 100px; text-align: center;">
+        <h1 style="color: var(--gold-color); font-size: 3rem;">Access Granted</h1>
+        <p style="margin-top: 20px;">Welcome back, Master Potter.</p>
+        <button onclick="location.reload()" style="margin-top: 50px; background: none; border: 1px solid red; color: red; padding: 10px 20px; cursor: pointer; border-radius: 10px;">Security Logout</button>
     </main>
 
-    <div id="choice-modal">
-        <div class="choice-box">
-            <h2 style="color:var(--gold-color); margin-bottom:20px;">Environment Setup</h2>
-            <p style="color:#8b949e; margin-bottom:30px;">How would you like to initialize this project?</p>
-            <div style="display:flex; gap:20px; justify-content:center;">
-                <div onclick="launchStudio('phone')" style="cursor:pointer; background:#0d1117; padding:25px; border-radius:20px; border:1px solid #333; flex:1;">
-                    <span style="font-size:35px;">📱</span><br><br><b>Phone View</b>
-                </div>
-                <div onclick="launchStudio('laptop')" style="cursor:pointer; background:#0d1117; padding:25px; border-radius:20px; border:1px solid #333; flex:1;">
-                    <span style="font-size:35px;">💻</span><br><br><b>Laptop View</b>
-                </div>
-            </div>
-            <button onclick="closeChoiceModal()" style="margin-top:30px; background:transparent; color:#555;">Cancel Operation</button>
-        </div>
-    </div>
-
-    <section id="ide-screen">
-        <header class="ide-header">
-            <button onclick="saveAndExitStudio()" style="background:#30363d; color:#fff;">← Save & Terminal</button>
-            <h3 id="studio-title" style="color:var(--gold-color);">System Editor</h3>
-            <div style="display:flex; gap:10px;">
-                <button onclick="toggleLogPanel()" style="background:#161b22; color:#fff; border:1px solid #333;">📜 View History</button>
-                <button onclick="forceSync()" class="btn-gold">Manual Sync</button>
-            </div>
-        </header>
-
-        <div id="history-panel" style="display:none; background:#0d1117; padding:20px; border-bottom:1px solid #333; max-height:200px; overflow-y:auto;"></div>
-
-        <div class="ide-body">
-            <div id="preview-part">
-                <div id="device-wrapper" class="phone-frame">
-                    <iframe id="render-viewport"></iframe>
-                </div>
-            </div>
-
-            <div id="editor-part">
-                <div id="ai-assistant-box">✨ AI Engine: System Nominal - Listening...</div>
-                
-                <div style="margin-bottom:20px;">
-                    <label style="font-size:11px; color:var(--gold-color); display:block; margin-bottom:5px;">System Identifier</label>
-                    <input type="text" id="studio-name-input" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:8px;">
-                </div>
-                
-                <div style="margin-bottom:20px;">
-                    <label style="font-size:11px; color:var(--gold-color); display:block; margin-bottom:5px;">External System Link</label>
-                    <input type="text" id="studio-link-input" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:8px;" placeholder="https://...">
-                </div>
-
-                <label style="font-size:11px; color:var(--gold-color); display:block; margin-bottom:5px;">Source Code Core</label>
-                <textarea id="code-editor" oninput="compileRealTime()" placeholder="// Initiate logic, Potter..."></textarea>
-            </div>
-        </div>
-    </section>
-
     <script>
-        /**
-         * Potter Core Logic Engine
-         * Handles persistence, AI simulation, and UI flow.
-         */
-
-        // --- 1. نظام الماوس والتحسين ---
-        const cursor = document.getElementById('mouse-cursor');
-        const bg = document.getElementById('bg-image');
+        // --- التحكم في الماوس والحركة ---
+        const dot = document.getElementById('dot');
+        const halo = document.getElementById('halo');
+        const bg = document.getElementById('bg-container');
 
         window.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // تحريك الماوس النقطة والهالة
+            dot.style.left = `${x}px`;
+            dot.style.top = `${y}px`;
+            
+            // حركة الهالة مع تأخير بسيط لسلاسة أكثر
+            setTimeout(() => {
+                halo.style.left = `${x}px`;
+                halo.style.top = `${y}px`;
+            }, 50);
 
-            // Parallax Effect
-            const moveX = (window.innerWidth / 2 - e.clientX) / 80;
-            const moveY = (window.innerHeight / 2 - e.clientY) / 80;
-            bg.style.transform = `scale(1.1) translate(${moveX}px, ${moveY}px)`;
+            // تأثير البارالاكس (الخلفية تتحرك عكس الماوس)
+            const moveX = (window.innerWidth / 2 - x) / 40;
+            const moveY = (window.innerHeight / 2 - y) / 40;
+            bg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
         });
 
-        // --- 2. نظام الدخول بالـ Enter ---
-        document.getElementById('pw-input').addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') validateIdentity();
-        });
-
-        // --- 3. نظام قاعدة البيانات المحلية (LocalStorage) ---
-        let vaultData = JSON.parse(localStorage.getItem('potter_master_vault')) || [];
-        let currentTargetIndex = null;
-
-        /**
-         * التحقق من الهوية
-         */
-        function validateIdentity() {
-            if (document.getElementById('pw-input').value === 'nashy') {
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                document.body.style.cursor = 'auto';
-                cursor.style.display = 'none';
-                refreshDashboard();
-            } else {
-                alert("ACCESS DENIED: Unauthorized Identity.");
-            }
-        }
-
-        /**
-         * تحديث الداشبورد
-         */
-        function refreshDashboard() {
-            const grid = document.getElementById('projects-grid');
-            grid.innerHTML = '';
-            vaultData.forEach((proj, idx) => {
-                const card = document.createElement('div');
-                card.className = 'project-card';
-                card.innerHTML = `
-                    <h3>${proj.name}</h3>
-                    <p style="font-size:10px; color:#555;">STAMP: ${proj.updated || 'NEW'}</p>
-                    <button class="btn-open" onclick="openChoiceModal(${idx})">OPEN VAULT</button>
-                    <button class="btn-delete" onclick="deleteSystem(${idx})">PURGE SYSTEM</button>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        /**
-         * نظام الـ IDE والتشغيل المباشر
-         */
-        function openChoiceModal(idx) {
-            currentTargetIndex = idx;
-            document.getElementById('choice-modal').style.display = 'flex';
-        }
-
-        function closeChoiceModal() {
-            document.getElementById('choice-modal').style.display = 'none';
-        }
-
-        function launchStudio(mode) {
-            const project = vaultData[currentTargetIndex];
-            document.getElementById('choice-modal').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('ide-screen').style.display = 'flex';
-            
-            // تعبئة البيانات
-            document.getElementById('studio-name-input').value = project.name;
-            document.getElementById('studio-link-input').value = project.link || '';
-            document.getElementById('code-editor').value = project.code || '<h1>Ready, Potter?</h1>';
-            
-            // ضبط الجهاز
-            const wrapper = document.getElementById('device-wrapper');
-            wrapper.className = (mode === 'laptop') ? 'laptop-frame' : 'phone-frame';
-            
-            compileRealTime();
-        }
-
-        /**
-         * المترجم المباشر وذكاء الـ AI
-         */
-        function compileRealTime() {
-            const code = document.getElementById('code-editor').value;
-            const link = document.getElementById('studio-link-input').value;
-            const iframe = document.getElementById('render-viewport');
-            
-            // العرض: إذا كان هناك لينك، افتحه، وإلا اعرض الكود
-            if (link.trim() !== "") {
-                iframe.src = link;
-            } else {
-                iframe.srcdoc = code;
-            }
-
-            // --- AI Analysis Logic ---
-            const ai = document.getElementById('ai-assistant-box');
-            let status = "✨ AI Engine: <span style='color:var(--success-green)'>Logic 100% Valid.</span>";
-            
-            if (code.includes('if') && !code.includes(':')) {
-                status = "✨ AI Engine: <span style='color:var(--error-red)'>ERROR: Missing ':' in condition.</span>";
-            } else if ((code.match(/\(/g) || []).length !== (code.match(/\)/g) || []).length) {
-                status = "✨ AI Engine: <span style='color:var(--error-red)'>WARNING: Unclosed brackets detected.</span>";
-            }
-
-            ai.innerHTML = status;
-        }
-
-        /**
-         * الحفظ النهائي وتاريخ التعديلات
-         */
-        function saveAndExitStudio() {
-            const p = vaultData[currentTargetIndex];
-            const oldCode = p.code || "";
-            const newCode = document.getElementById('code-editor').value;
-            
-            // تسجيل الهيستوري
-            if (!p.history) p.history = [];
-            if (oldCode !== newCode) {
-                p.history.push({
-                    date: new Date().toLocaleString(),
-                    old: oldCode.substring(0, 30) + "...",
-                    new: newCode.substring(0, 30) + "..."
-                });
-            }
-
-            p.name = document.getElementById('studio-name-input').value;
-            p.link = document.getElementById('studio-link-input').value;
-            p.code = newCode;
-            p.updated = new Date().toLocaleString();
-
-            syncVault();
-            document.getElementById('ide-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            refreshDashboard();
-        }
-
-        function toggleLogPanel() {
-            const panel = document.getElementById('history-panel');
-            if (panel.style.display === 'block') { panel.style.display = 'none'; return; }
-            panel.style.display = 'block';
-            const logs = vaultData[currentTargetIndex].history || [];
-            panel.innerHTML = logs.map(l => `
-                <div style="font-size:11px; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
-                    <b style="color:var(--gold-color)">[${l.date}]</b> 
-                    <span style="color:var(--error-red)">OLD: ${l.old}</span> | 
-                    <span style="color:var(--success-green)">NEW: ${l.new}</span>
-                </div>
-            `).reverse().join('');
-        }
-
-        function syncVault() {
-            localStorage.setItem('potter_master_vault', JSON.stringify(vaultData));
-        }
-
-        function createNewProject() {
-            const name = prompt("Project Identifier:");
-            if (name) {
-                vaultData.push({ name: name, code: '', history: [], updated: new Date().toLocaleString() });
-                syncVault();
-                refreshDashboard();
-            }
-        }
-
-        function deleteSystem(idx) {
-            if (confirm("Confirm Permanent Deletion Protocol?")) {
-                vaultData.splice(idx, 1);
-                syncVault();
-                refreshDashboard();
-            }
-        }
-
-        function forceSync() { syncVault(); alert("Manual Sync Completed."); }
-
-        // إخفاء شاشة الترحيب
+        // --- تلاشي شاشة الترحيب ---
         window.onload = () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                if (splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => splash.style.visibility = 'hidden', 1000);
-                }
-            }, 3000);
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 1200);
+            }, 3500); // 3.5 ثانية للترحيب
         };
+
+        // --- التحقق من الهوية ---
+        function validateIdentity() {
+            const pass = document.getElementById('pw-input').value;
+            if (pass === 'nashy') {
+                document.getElementById('login-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    // إعادة الماوس للشكل الطبيعي داخل لوحة التحكم
+                    document.body.style.cursor = 'default';
+                    dot.style.display = 'none';
+                    halo.style.display = 'none';
+                }, 500);
+            } else {
+                alert("IDENTITY UNVERIFIED: Access Denied.");
+            }
+        }
+
+        // تفعيل زر Enter للدخول
+        document.getElementById('pw-input').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') validateIdentity();
+        });
     </script>
 </body>
 </html>
