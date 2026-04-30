@@ -1,49 +1,52 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code World | Potter Master Vault</title>
-    <link rel="stylesheet" href="style.css"> <!-- ربط ملف الاستايل -->
+    <!-- ربط ملف الستايل اللي لسه مخلصينه -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- شاشة الترحيب السوداء -->
-<div id="splash-screen">
-    <div class="welcome-wrapper">
-        <!-- الرسالة الترحيبية -->
-        <h1 class="welcome-msg" id="typewriter"></h1>
-        <!-- خط تحميل بسيط تحت الرسالة -->
-        <div class="loader-line"></div>
+    <!-- 1. شاشة الترحيب السوداء -->
+    <div id="splash-screen">
+        <div class="welcome-wrapper" style="text-align: center;">
+            <!-- هنا هيظهر تأثير الكتابة البرمجي -->
+            <h1 class="welcome-msg" id="typewriter"></h1>
+            <!-- خط التحميل الذهبي -->
+            <div class="loader-line"></div>
+        </div>
     </div>
-</div>
 
-    <!-- الماوس السحري -->
+    <!-- 2. عناصر الماوس الذهبي -->
     <div id="dot"></div>
     <div id="halo"></div>
 
-    <!-- حاوية الخلفية -->
+    <!-- 3. حاوية الخلفية (مود القهوة واللاب توب) -->
     <div id="bg-container"></div>
 
-    <!-- واجهة الدخول -->
+    <!-- 4. واجهة الدخول (Unlock) -->
     <section id="login-screen">
         <div class="login-card">
             <div class="brand-logo">
                 <h1>World_Code</h1>
                 <p>Eng/Potter</p>
             </div>
+            <!-- مدخل الباسورد (nashy) -->
             <input id="pw-input" type="password" placeholder="••••••••">
             <button class="btn-gold" onclick="validateIdentity()">Unlock</button>
         </div>
     </section>
 
-    <!-- السيستم الداخلي (الخزنة) -->
+    <!-- 5. السيستم الداخلي (الخزنة) -->
     <main id="dashboard">
-        <h1 class="vault-title">ACCESS GRANTED</h1>
-        <p>Welcome back, Master Potter. Your vault is secure.</p>
-        <button class="logout-btn" onclick="location.reload()">Security Logout</button>
+        <h1 style="color: var(--gold-color); font-size: 3.5rem; text-shadow: 0 0 20px var(--gold-color);">ACCESS GRANTED</h1>
+        <p style="font-size: 1.2rem; margin-top: 20px;">Welcome back, Master Potter. System is fully operational.</p>
+        <button onclick="location.reload()" style="margin-top: 40px; background: none; border: 1px solid red; color: red; padding: 10px 20px; cursor: pointer; border-radius: 8px;">Security Logout</button>
     </main>
 
-    <script src="script.js"></script> <!-- ربط ملف الجافا سكريبت -->
+    <!-- ربط ملف السكريبت اللي هنعمله الخطوة الجاية -->
+    <script src="script.js"></script>
 </body>
 </html>
