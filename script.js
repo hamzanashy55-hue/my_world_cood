@@ -2,7 +2,6 @@
 const dot = document.getElementById('dot');
 const halo = document.getElementById('halo');
 const bg = document.getElementById('bg-container');
-const typewriter = document.getElementById('typewriter');
 const splash = document.getElementById('splash-screen');
 const loginScreen = document.getElementById('login-screen');
 const dashboard = document.getElementById('dashboard');
@@ -14,21 +13,23 @@ window.addEventListener('mousemove', (e) => {
     const y = e.clientY;
 
     // تحريك النقطة والهالة لحظياً
-    dot.style.left = `${x}px`;
-    dot.style.top = `${y}px`;
-    halo.style.left = `${x}px`;
-    halo.style.top = `${y}px`;
+    if (dot && halo) {
+        dot.style.left = `${x}px`;
+        dot.style.top = `${y}px`;
+        halo.style.left = `${x}px`;
+        halo.style.top = `${y}px`;
+        createParticle(x, y);
+    }
 
-    // خلق تأثير الجسيمات (Trail)
-    createParticle(x, y);
-
-    // تحريك الخلفية (البارالاكس)
-    const moveX = (window.innerWidth / 2 - x) / 45;
-    const moveY = (window.innerHeight / 2 - y) / 45;
-    bg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
+    // تحريك الخلفية (البارالاكس) - حركة هادية عكس اتجاه الماوس
+    if (bg) {
+        const moveX = (window.innerWidth / 2 - x) / 45;
+        const moveY = (window.innerHeight / 2 - y) / 45;
+        bg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
+    }
 });
 
-// وظيفة رسم النقط الذهبية خلف الماوس
+// وظيفة رسم الجسيمات الذهبية خلف الماوس
 function createParticle(x, y) {
     const p = document.createElement('div');
     p.className = 'trail-particle';
@@ -43,30 +44,30 @@ function createParticle(x, y) {
     setTimeout(() => p.remove(), 800);
 }
 
-// --- 3. شاشة الترحيب وتأثير الكتابة (Typewriter) ---
+// --- 3. تشغيل مشهد "البوابة السينيمائية" عند التحميل ---
 window.onload = () => {
-    const message = "> Initializing Master_Vault... Welcome, Eng/Potter";
-    let i = 0;
-
-    function typeWriter() {
-        if (i < message.length) {
-            typewriter.innerHTML += message.charAt(i);
-            i++;
-            setTimeout(typeWriter, 70); // سرعة الكتابة
-        }
+    // إظهار الخلفية بتأثير Unblur تدريجي
+    if (bg) {
+        bg.style.filter = 'blur(0)';
     }
 
-    typeWriter();
+    // انتظر ثانيتين ثم افتح البوابة (يمين وشمال)
+    setTimeout(() => {
+        if (splash) {
+            splash.classList.add('open'); // تفعيل الأنيميشن اللي في الـ CSS
+        }
+    }, 2000);
 
-    // إخفاء الشاشة السوداء بعد انتهاء التحميل
+    // إخفاء شاشة الـ Splash تماماً بعد الفتح
     setTimeout(() => {
         if (splash) {
             splash.style.opacity = '0';
+            splash.style.pointerEvents = 'none'; // عشان تعرف تدوس على اللي تحتها
             setTimeout(() => {
                 splash.style.display = 'none';
-            }, 1200);
+            }, 1500);
         }
-    }, 4000);
+    }, 4500);
 };
 
 // --- 4. منطق التحقق من الهوية (الباسورد: nashy) ---
@@ -80,8 +81,8 @@ function validateIdentity() {
             
             // إرجاع الماوس الطبيعي داخل السيستم
             document.body.style.cursor = 'default';
-            dot.style.display = 'none';
-            halo.style.display = 'none';
+            if (dot) dot.style.display = 'none';
+            if (halo) halo.style.display = 'none';
         }, 500);
     } else {
         alert("ACCESS DENIED: Identity Unverified.");
