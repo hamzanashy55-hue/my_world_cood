@@ -35,11 +35,10 @@
             inset: 0;
             background: #000;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 10000;
-            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .welcome-text {
@@ -65,61 +64,63 @@
             100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
         }
 
-        /* --- 2. الماوس الذهبي المطور --- */
-       #dot {
-    width: 6px;
-    height: 6px;
-    background: #fff;
-    box-shadow: 0 0 15px #fff, 0 0 30px var(--gold-color);
-    position: fixed;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10002;
-    transform: translate(-50%, -50%);
-    transition: width 0.2s, height 0.2s; /* استجابة سريعة جداً */
-}
-      /* الهالة الضوئية: خفيفة وبتتحرك مع الماوس لحظياً */
-#halo {
-    width: 30px;
-    height: 30px;
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
-    position: fixed;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10001;
-    transform: translate(-50%, -50%);
-}
-        .trail-particle {
-    position: fixed;
-    width: 4px;
-    height: 4px;
-    background: var(--gold-color);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 10000;
-    transform: translate(-50%, -50%);
-    animation: fadeOutParticle 0.8s linear forwards;
-}
+        /* --- 2. الماوس الذهبي المتطور --- */
+        #dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            box-shadow: 0 0 15px #fff, 0 0 30px var(--gold-color);
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10002;
+            transform: translate(-50%, -50%);
+        }
 
-@keyframes fadeOutParticle {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-}
-#bg-container {
-    position: fixed;
-    inset: -10%; /* حركة البارالاكس */
-    z-index: -1;
-    will-change: transform;
-    
-    /* تعديل جذري لضمان ظهور الخلفية */
-    background-color: #080a0f; /* لون احتياطي */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
-                      url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-}
+        #halo {
+            width: 35px;
+            height: 35px;
+            border: 1.5px solid rgba(212, 175, 55, 0.5);
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%);
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+        }
+
+        .trail-particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--gold-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            animation: fadeOutParticle 0.8s linear forwards;
+        }
+
+        @keyframes fadeOutParticle {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+        }
+
+        /* --- 3. الخلفية الإجبارية (مود القهوة واللابتوب) --- */
+        #bg-container {
+            position: fixed;
+            inset: -10%; 
+            z-index: -1;
+            will-change: transform;
+            background-color: #080a0f; 
+            /* الرابط المباشر للصورة مع التعتيم */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                              url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=2070');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
         /* --- 4. شاشة الدخول --- */
         #login-screen {
             height: 100vh;
@@ -130,14 +131,14 @@
         }
 
         .login-card {
-            background: rgba(13, 17, 23, 0.6);
+            background: rgba(13, 17, 23, 0.7);
             backdrop-filter: blur(20px);
             padding: 60px 40px;
             border-radius: 40px;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             text-align: center;
             width: 420px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
             animation: floating 5s infinite ease-in-out;
         }
 
@@ -156,8 +157,7 @@
             font-size: 3rem;
             font-weight: 800;
             letter-spacing: 3px;
-            margin-bottom: 5px;
-            text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
         }
 
         .brand-logo p {
@@ -165,7 +165,6 @@
             font-family: 'Courier New', monospace;
             font-size: 1.1rem;
             letter-spacing: 4px;
-            font-weight: bold;
         }
 
         @keyframes sideToSide {
@@ -173,11 +172,10 @@
             50% { transform: translateX(15px); }
         }
 
-        /* مدخل الباسورد */
         #pw-input {
             width: 100%;
             padding: 18px;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             color: #fff;
@@ -190,9 +188,8 @@
 
         #pw-input:focus {
             border-color: var(--gold-color);
-            background: rgba(0, 0, 0, 0.6);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
             outline: none;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
 
         .btn-gold {
@@ -201,40 +198,43 @@
             padding: 18px;
             border-radius: 15px;
             font-weight: 800;
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
             width: 100%;
             border: none;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
             text-transform: uppercase;
         }
 
         .btn-gold:hover {
-            transform: scale(1.03) translateY(-3px);
             background: #fff;
-            box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+            transform: scale(1.02);
         }
 
-        /* إخفاء الأقسام الداخلية في البداية */
-        #dashboard, #ide-screen { display: none; }
-
+        /* المخزن الداخلي (يظهر بعد الباسورد) */
+        #dashboard {
+            display: none;
+            padding: 100px;
+            text-align: center;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
-    <!-- 1. شاشة الترحيب -->
+    <!-- شاشة الترحيب -->
     <div id="splash-screen">
         <div class="welcome-text">HELLO<br>ENG_POTTER</div>
     </div>
 
-    <!-- 2. الماوس المضيء -->
+    <!-- الماوس المضيء -->
     <div id="dot"></div>
     <div id="halo"></div>
 
-    <!-- 3. الخلفية المتحركة -->
+    <!-- الخلفية -->
     <div id="bg-container"></div>
 
-    <!-- 4. واجهة الدخول -->
+    <!-- واجهة الدخول -->
     <section id="login-screen">
         <div class="login-card">
             <div class="brand-logo">
@@ -242,39 +242,37 @@
                 <p>Eng/Potter</p>
             </div>
             <input id="pw-input" type="password" placeholder="••••••••">
-            <button class="btn-gold" onclick="validateIdentity()">Unlock Master </button>
+            <button class="btn-gold" onclick="validateIdentity()">Unlock</button>
         </div>
     </section>
 
-    <!-- 5. المحتوى الداخلي (المخزن) -->
-    <main id="dashboard" style="padding: 100px; text-align: center;">
-        <h1 style="color: var(--gold-color); font-size: 3rem;">Access Granted</h1>
-        <p style="margin-top: 20px;">Welcome back, Master Potter.</p>
+    <!-- الداشبورد -->
+    <main id="dashboard">
+        <h1 style="color: var(--gold-color); font-size: 4rem; text-shadow: 0 0 20px var(--gold-color);">ACCESS GRANTED</h1>
+        <p style="font-size: 1.5rem; margin-top: 20px;">Welcome back, Eng/Potter. System is ready.</p>
         <button onclick="location.reload()" style="margin-top: 50px; background: none; border: 1px solid red; color: red; padding: 10px 20px; cursor: pointer; border-radius: 10px;">Security Logout</button>
     </main>
 
     <script>
-        // تعريف العناصر مرة واحدة فقط في البداية
         const dot = document.getElementById('dot');
         const halo = document.getElementById('halo');
         const bg = document.getElementById('bg-container');
 
-        // --- 1. نظام الماوس والجسيمات ---
+        // --- نظام الماوس السريع والـ Trail ---
         window.addEventListener('mousemove', (e) => {
             const x = e.clientX;
             const y = e.clientY;
 
-            // الماوس الأساسي: سرعة لحظية
+            // الماوس يتحرك لحظياً
             dot.style.left = `${x}px`;
             dot.style.top = `${y}px`;
-            
             halo.style.left = `${x}px`;
             halo.style.top = `${y}px`;
 
-            // خلق الجسيمات (The Trail)
+            // رسم الجسيمات
             createParticle(x, y);
 
-            // حركة الخلفية (البارالاكس)
+            // البارالاكس
             const moveX = (window.innerWidth / 2 - x) / 45;
             const moveY = (window.innerHeight / 2 - y) / 45;
             bg.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
@@ -285,32 +283,22 @@
             particle.className = 'trail-particle';
             particle.style.left = `${x}px`;
             particle.style.top = `${y}px`;
-            
-            const size = Math.random() * 5 + 2;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-
             document.body.appendChild(particle);
-
-            setTimeout(() => {
-                particle.remove();
-            }, 800);
+            setTimeout(() => particle.remove(), 800);
         }
 
-        // --- 2. تلاشي شاشة الترحيب ---
+        // --- تلاشي شاشة الترحيب ---
         window.onload = () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 if (splash) {
                     splash.style.opacity = '0';
-                    setTimeout(() => {
-                        splash.style.display = 'none';
-                    }, 1200);
+                    setTimeout(() => splash.style.display = 'none', 1200);
                 }
             }, 3500);
         };
 
-        // --- 3. التحقق من الهوية ---
+        // --- التحقق من الهوية ---
         function validateIdentity() {
             const pass = document.getElementById('pw-input').value;
             if (pass === 'nashy') {
@@ -318,18 +306,16 @@
                 setTimeout(() => {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('dashboard').style.display = 'block';
-                    
-                    // إخفاء الماوس السحري لإظهار الماوس الطبيعي داخل الداشبورد
                     document.body.style.cursor = 'default';
                     dot.style.display = 'none';
                     halo.style.display = 'none';
                 }, 500);
             } else {
-                alert("IDENTITY UNVERIFIED: Access Denied.");
+                alert("ACCESS DENIED: Identity Unverified.");
             }
         }
 
-        // تفعيل زر Enter للدخول
+        // Enter Key Support
         document.getElementById('pw-input').addEventListener('keyup', (e) => {
             if (e.key === 'Enter') validateIdentity();
         });
