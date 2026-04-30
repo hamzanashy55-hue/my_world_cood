@@ -15,12 +15,22 @@ body, html {
     height: 100%; 
     width: 100%;
     background-color: var(--bg-dark);
+    /* منع التمرير عشان الماوس والأنيميشن */
     overflow: hidden; 
+    /* إخفاء الماوس على اللاب توب فقط */
     cursor: none;
     font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
-/* --- 1. شاشة الترحيب السينيمائية --- */
+/* --- 1. تعديل الموبايل (Responsive) --- */
+@media (max-width: 768px) {
+    body { cursor: auto; /* إظهار الماوس الطبيعي في الموبايل لأن اللمس ملوش ماوس ذهبي */ }
+    #dot, #halo { display: none; /* إخفاء الماوس الذهبي في الفون عشان ميزحمش الشاشة */ }
+    .welcome-msg { font-size: 2rem !important; /* تصغير رسالة الترحيب في الفون */ }
+    .login-card { width: 90% !important; padding: 30px !important; /* تكبير الكارت لملء شاشة الفون */ }
+}
+
+/* --- 2. شاشة الترحيب --- */
 #splash-screen {
     position: fixed;
     inset: 0;
@@ -30,93 +40,51 @@ body, html {
     align-items: center;
     justify-content: center;
     z-index: 10000;
-    /* التحول السينيمائي الناعم */
-    transition: all 1.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+    transition: all 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
 }
 
 .welcome-msg {
-    font-family: 'Cascadia Code', 'Courier New', monospace;
+    font-family: 'Cascadia Code', monospace;
     font-size: 3.5rem;
     color: var(--gold-color);
     text-shadow: 0 0 25px var(--gold-color);
     margin-bottom: 25px;
-    opacity: 0; /* هتظهر مع الـ Script */
-    transform: translateY(20px);
-    transition: all 1s ease;
+    text-align: center;
 }
 
-/* الكلاس ده هيضيفه الـ Script أول ما يشتغل */
-.welcome-msg.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.loader-line {
-    width: 0;
-    height: 2px;
-    background: var(--gold-color);
-    box-shadow: 0 0 15px var(--gold-color);
-    transition: width 3s ease-in-out;
-}
-
-/* --- 2. الماوس والجسيمات --- */
-#dot { 
-    width: 8px; height: 8px; background: #fff; 
-    box-shadow: 0 0 15px var(--gold-color); 
-    position: fixed; border-radius: 50%; pointer-events: none; z-index: 10002; 
-    transform: translate(-50%, -50%); 
-}
-
-#halo { 
-    width: 35px; height: 35px; 
-    border: 1.5px solid var(--gold-color); 
-    position: fixed; border-radius: 50%; pointer-events: none; z-index: 10001; 
-    transform: translate(-50%, -50%); 
-}
-
-.trail-particle { 
-    position: fixed; width: 4px; height: 4px; 
-    background: var(--gold-color); border-radius: 50%; 
-    pointer-events: none; z-index: 10000; 
-    transform: translate(-50%, -50%); 
-    animation: fadeOut 0.8s linear forwards; 
-}
-
-@keyframes fadeOut { 
-    0% { opacity: 1; } 
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(0); } 
-}
-
-/* --- 3. الخلفية (مود القهوة واللابتوب مع Blur) --- */
+/* --- 3. الخلفية (صورة برمجية هادئة وجديدة) --- */
 #bg-container {
     position: fixed;
-    inset: -10%;
+    inset: -5%; /* تقليل الإزاحة عشان تناسب الموبايل */
     z-index: -1;
     background-color: #080a0f;
-    /* استخدام رابط أكثر استقراراً لضمان التحميل */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                      url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072');
+    /* صورة برمجية احترافية وهادية جداً */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+                      url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    /* تأثير التغبيش السينيمائي في البداية */
-    filter: blur(15px); 
-    transition: filter 2.5s ease;
-    will-change: transform, filter;
+    filter: blur(10px); /* التغبيش السينيمائي اللي بيختفي */
+    transition: filter 2s ease;
 }
 
 /* --- 4. كارت الدخول --- */
 #login-screen { 
-    height: 100vh; display: flex; align-items: center; justify-content: center; 
+    height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
 }
 
 .login-card { 
-    background: rgba(13, 17, 23, 0.7); 
+    background: rgba(13, 17, 23, 0.75); 
     backdrop-filter: blur(20px); 
-    padding: 60px 40px; border-radius: 40px; 
+    padding: 50px; 
+    border-radius: 30px; 
     border: 1px solid rgba(212, 175, 55, 0.3); 
-    text-align: center; width: 420px; 
-    box-shadow: 0 40px 100px #000;
+    text-align: center; 
+    width: 420px; 
+    box-shadow: 0 40px 100px rgba(0,0,0,0.9);
     animation: float 5s infinite ease-in-out;
 }
 
@@ -126,19 +94,17 @@ body, html {
 }
 
 #pw-input { 
-    width: 100%; padding: 18px; margin: 25px 0; 
+    width: 100%; padding: 15px; margin: 20px 0; 
     background: rgba(0,0,0,0.5); border: 1px solid #333; 
-    border-radius: 15px; color: #fff; text-align: center; font-size: 1.2rem; 
-    letter-spacing: 3px;
+    border-radius: 12px; color: #fff; text-align: center; font-size: 1.2rem; 
 }
 
 .btn-gold { 
     background: var(--gold-color); color: #000; 
-    padding: 18px; border-radius: 15px; font-weight: bold; 
+    padding: 15px; border-radius: 12px; font-weight: bold; 
     width: 100%; border: none; cursor: pointer; transition: 0.3s;
-    text-transform: uppercase;
 }
 
-.btn-gold:hover { background: #fff; transform: scale(1.02); }
-
-#dashboard { display: none; padding: 100px; text-align: center; color: white; }
+/* الماوس الذهبي */
+#dot { width: 8px; height: 8px; background: #fff; box-shadow: 0 0 15px var(--gold-color); position: fixed; border-radius: 50%; pointer-events: none; z-index: 10002; transform: translate(-50%, -50%); }
+#halo { width: 35px; height: 35px; border: 1.5px solid var(--gold-color); position: fixed; border-radius: 50%; pointer-events: none; z-index: 10001; transform: translate(-50%, -50%); }
