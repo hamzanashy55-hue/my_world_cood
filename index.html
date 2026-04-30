@@ -4,66 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code World | Potter Master Vault</title>
-    <!-- ربط ملف الستايل اللي لسه مخلصينه -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-   <!-- شاشة الترحيب البوابة السينيمائية -->
-<div id="splash-screen">
-    <div class="door left-door"></div>
-    <div class="door right-door"></div>
-    <div class="gold-line"></div> <!-- الخط الذهبي المركزي -->
-    
-    <div class="welcome-content">
-        <h1 class="welcome-msg pulse-gold">HELLO_POTTER</h1>
-    </div>
-</div>
-
-<!-- العناصر المعتادة -->
-<div id="dot"></div>
-<div id="halo"></div>
-<div id="bg-container"></div>
-
-<section id="login-screen">
-    <div class="login-card">
-        <div class="brand-logo">
-            <h1>World_Code</h1>
-            <p>Eng/Potter</p>
+    <!-- البوابة السينيمائية -->
+    <div id="splash-screen">
+        <div class="door left-door"></div>
+        <div class="door right-door"></div>
+        <div class="gold-line"></div>
+        <div class="welcome-content">
+            <h1 class="pulse-gold">HELLO_POTTER</h1>
         </div>
-        <input id="pw-input" type="password" placeholder="••••••••">
-        <button class="btn-gold" onclick="validateIdentity()">Unlock</button>
     </div>
-</section>
 
-    <!-- 2. عناصر الماوس الذهبي -->
+    <!-- الماوس الذهبي -->
     <div id="dot"></div>
     <div id="halo"></div>
 
-    <!-- 3. حاوية الخلفية (مود القهوة واللاب توب) -->
+    <!-- الخلفية -->
     <div id="bg-container"></div>
 
-    <!-- 4. واجهة الدخول (Unlock) -->
+    <!-- شاشة الدخول -->
     <section id="login-screen">
         <div class="login-card">
             <div class="brand-logo">
                 <h1>World_Code</h1>
                 <p>Eng/Potter</p>
             </div>
-            <!-- مدخل الباسورد (nashy) -->
             <input id="pw-input" type="password" placeholder="••••••••">
             <button class="btn-gold" onclick="validateIdentity()">Unlock</button>
         </div>
     </section>
 
-    <!-- 5. السيستم الداخلي (الخزنة) -->
-    <main id="dashboard">
+    <!-- السيستم الداخلي -->
+    <main id="dashboard" style="display:none;">
         <h1 style="color: var(--gold-color); font-size: 3.5rem; text-shadow: 0 0 20px var(--gold-color);">ACCESS GRANTED</h1>
-        <p style="font-size: 1.2rem; margin-top: 20px;">Welcome back, Master Potter. System is fully operational.</p>
+        <p style="font-size: 1.2rem; margin-top: 20px; color: white;">Welcome back, Master Potter. System is fully operational.</p>
         <button onclick="location.reload()" style="margin-top: 40px; background: none; border: 1px solid red; color: red; padding: 10px 20px; cursor: pointer; border-radius: 8px;">Security Logout</button>
     </main>
 
-    <!-- ربط ملف السكريبت اللي هنعمله الخطوة الجاية -->
     <script src="script.js"></script>
 </body>
 </html>
